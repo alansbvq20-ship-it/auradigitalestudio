@@ -1,0 +1,16 @@
+{
+  "name": "Aura Digital Estudio",
+  "short_name": "Aura",
+  "description": "Estudio de diseño web, desarrollo y marketing digital en Argentina.",
+  "lang": "es-AR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#03051a",
+  "background_color": "#03051a",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
