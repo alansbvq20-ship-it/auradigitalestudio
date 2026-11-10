@@ -320,7 +320,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:var(--s2);flex-wrap:
         <article class="tool" aria-labelledby="t-utm">
           <header><h3 id="t-utm">Generador de UTM</h3><span class="pill">Medición</span></header>
           <div class="fields">
-            <label class="full" for="u-url">URL de destino<input id="u-url" type="url" value="https://auradigital.studio/landing"></label>
+            <label class="full" for="u-url">URL de destino<input id="u-url" type="text" inputmode="url" autocomplete="off" placeholder="auradigitalestudio.com/promo" value="https://auradigitalestudio.com"></label>
             <label for="u-src">Fuente (utm_source)
               <select id="u-src"><option>facebook</option><option>instagram</option><option>google</option><option>tiktok</option><option>newsletter</option></select>
             </label>
@@ -421,7 +421,10 @@ footer .wrap{display:flex;justify-content:space-between;gap:var(--s2);flex-wrap:
   const slug=t=>t.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/\s+/g,"_").replace(/[^a-z0-9_\-]/g,"");
   function utm(){
     const m=$("u-msg"),s=m.querySelector("span");
-    let u;try{u=new URL($("u-url").value.trim())}catch(e){$("u-out").textContent="";m.dataset.s="bad";s.textContent="La URL tiene que empezar con https:// para poder generar el enlace.";return}
+    let raw=$("u-url").value.trim();
+    if(!raw){$("u-out").textContent="";m.dataset.s="";s.textContent="Pegá la dirección de tu página, por ejemplo auradigitalestudio.com/promo";return}
+    if(!/^https?:\/\//i.test(raw))raw="https://"+raw;
+    let u;try{u=new URL(raw);if(!u.hostname.includes("."))throw 0}catch(e){$("u-out").textContent="";m.dataset.s="bad";s.textContent="Esa dirección no parece válida. Revisá que tenga el dominio completo, por ejemplo tusitio.com";return}
     u.searchParams.set("utm_source",$("u-src").value);
     u.searchParams.set("utm_medium",$("u-med").value);
     const c=slug($("u-camp").value); if(c)u.searchParams.set("utm_campaign",c); else u.searchParams.delete("utm_campaign");
