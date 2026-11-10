@@ -3,26 +3,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Aura Digital Estudio | Diseño web y marketing digital en Argentina</title>
-<meta name="description" content="Estudio de diseño web, desarrollo y marketing digital en Argentina. Sitios, apps, campañas de ads y redes sociales con resultados medibles. Cotizá online.">
+<title>Aura Digital Estudio | Diseño web, apps y marketing digital en Argentina</title>
+<meta name="description" content="Estudio de diseño web, desarrollo de apps y marketing digital en Argentina. Sitios, aplicaciones, campañas de ads y redes sociales. Cotizá online.">
 <link rel="canonical" href="https://auradigitalestudio.com/">
-<meta name="theme-color" content="#03051a">
+<meta name="theme-color" content="#07080f">
 <meta name="robots" content="index,follow,max-image-preview:large">
 
 <!-- Open Graph / Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:locale" content="es_AR">
 <meta property="og:site_name" content="Aura Digital Estudio">
-<meta property="og:title" content="Aura Digital Estudio | Diseño web y marketing digital en Argentina">
-<meta property="og:description" content="Estudio de diseño web, desarrollo y marketing digital en Argentina. Sitios, apps, campañas de ads y redes sociales con resultados medibles.">
+<meta property="og:title" content="Aura Digital Estudio | Diseño web, apps y marketing digital en Argentina">
+<meta property="og:description" content="Estudio de diseño web, desarrollo de apps y marketing digital en Argentina. Sitios, aplicaciones, campañas de ads y redes sociales.">
 <meta property="og:url" content="https://auradigitalestudio.com/">
 <meta property="og:image" content="https://auradigitalestudio.com/img/og-image.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Logo de Aura Digital Estudio, una letra A de neón cian y violeta">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Aura Digital Estudio | Diseño web y marketing digital en Argentina">
-<meta name="twitter:description" content="Estudio de diseño web, desarrollo y marketing digital en Argentina. Sitios, apps, campañas de ads y redes sociales con resultados medibles.">
+<meta name="twitter:title" content="Aura Digital Estudio | Diseño web, apps y marketing digital en Argentina">
+<meta name="twitter:description" content="Estudio de diseño web, desarrollo de apps y marketing digital en Argentina. Sitios, aplicaciones, campañas de ads y redes sociales.">
 <meta name="twitter:image" content="https://auradigitalestudio.com/img/og-image.jpg">
 
 <!-- Favicons -->
@@ -34,8 +34,9 @@
 <!-- Fuentes -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Michroma&display=swap">
 <link rel="stylesheet" href="css/styles.css">
+<script>document.documentElement.classList.add("js")</script>
 
 <script type="application/ld+json">
 {
@@ -46,7 +47,7 @@
   "email": "sistemas@auradigitalestudio.com",
   "logo": "https://auradigitalestudio.com/img/logo.jpg",
   "image": "https://auradigitalestudio.com/img/og-image.jpg",
-  "description": "Estudio de diseño web, desarrollo y marketing digital en Argentina.",
+  "description": "Estudio de diseño web, desarrollo de apps y marketing digital en Argentina.",
   "areaServed": { "@type": "Country", "name": "Argentina" },
   "knowsLanguage": "es-AR",
   "hasOfferCatalog": {
@@ -67,19 +68,34 @@
 
 <nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="brand" href="#inicio"><i aria-hidden="true"></i>AURA</a>
-    <ul>
+    <a class="brand" href="#inicio"><img src="img/logo-mark.webp" alt="" width="34" height="34">AURA</a>
+    <ul class="menu" id="menu">
       <li><a href="#servicios">Servicios</a></li>
-      <li id="nav-proyectos" hidden><a href="#proyectos">Proyectos</a></li>
-      <li><a href="#cotizador">Cotizador</a></li>
+      <li data-proj-link hidden><a href="#proyectos">Proyectos</a></li>
       <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#cotizador">Cotizador</a></li>
+      <li><a href="#contacto">Contacto</a></li>
     </ul>
-    <a class="btn" href="#contacto">Hablemos</a>
+    <div class="nav-r">
+      <a class="btn sm" href="#contacto">Hablemos</a>
+      <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú">
+        <svg class="b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
   </div>
 </nav>
 
 <header class="hero" id="inicio">
   <div class="wrap">
+    <div class="hero-copy">
+      <h1>Construimos el <em>ecosistema digital</em> de tu marca</h1>
+      <p class="sub">Desarrollo web y apps, marketing y redes sociales en un solo estudio.</p>
+      <div class="ctas">
+        <a class="btn" href="#cotizador">Cotizar proyecto</a>
+        <a class="btn ghost" href="#servicios">Ver servicios</a>
+      </div>
+    </div>
     <div class="logo3d" id="logo3d">
       <div class="tilt idle" id="tilt">
         <picture>
@@ -93,38 +109,46 @@
         <span class="glare" aria-hidden="true"></span>
       </div>
     </div>
-    <h1 class="tag">Diseño, desarrollo y marketing sin fricción.</h1>
-    <p class="sub">Somos la atmósfera digital de tu marca: le damos presencia, brillo y solidez a tu negocio en internet con ecosistemas construidos con identidad y precisión.</p>
-    <div class="ctas">
-      <a class="btn" href="#cotizador">Cotizar mi proyecto</a>
-      <a class="btn ghost" href="#servicios">Ver servicios</a>
-    </div>
   </div>
 </header>
 
 <main id="contenido">
-  <section class="band" id="servicios" aria-labelledby="h-servicios">
+  <!-- Números de impacto: se muestra solo si hay valores cargados en STATS (js/app.js) -->
+  <section class="stats" id="numeros" aria-label="Números de Aura Digital Estudio" hidden>
+    <div class="wrap"><ul id="stats-list"></ul></div>
+  </section>
+
+  <!-- Clientes: se muestra solo si CLIENTES (js/app.js) tiene elementos -->
+  <section class="clients" id="clientes" aria-labelledby="h-clientes" hidden>
     <div class="wrap">
-      <div class="head">
-        <span class="eyebrow">Servicios core</span>
-        <h2 id="h-servicios">Tres disciplinas, un mismo campo magnético</h2>
+      <p id="h-clientes">Confían en nosotros</p>
+      <ul id="clients-list"></ul>
+    </div>
+  </section>
+
+  <section class="band alt" id="servicios" aria-labelledby="h-servicios">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">Servicios</span>
+        <h2 id="h-servicios">Tres disciplinas, un mismo equipo</h2>
         <p class="lead">No entregamos piezas aisladas. Código, pauta y contenido trabajan juntos para que tu marca se vea, convierta y crezca.</p>
       </div>
       <div class="services">
-        <article class="svc" style="--hue:var(--cyan)">
-          <span class="code">AURA / CODE</span>
-          <h3>Aura <span>Code</span></h3>
-          <p>Desarrollo web y apps a medida, con estándares profesionales de rendimiento y accesibilidad.</p>
+        <article class="svc reveal">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 8l-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/></svg></span>
+          <h3>Aura Code</h3>
+          <p>Desarrollo web y de apps a medida, con estándares profesionales de rendimiento y accesibilidad.</p>
           <ul>
             <li>Sitios corporativos</li>
             <li>Landing pages de alta conversión</li>
             <li>E-commerce optimizados</li>
-            <li>Aplicaciones web funcionales</li>
+            <li>Apps y aplicaciones web funcionales</li>
           </ul>
+          <a class="link" href="#cotizador" aria-label="Saber más sobre Aura Code">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
-        <article class="svc" style="--hue:#7fa8ff">
-          <span class="code">AURA / GROWTH</span>
-          <h3>Aura <span>Growth</span></h3>
+        <article class="svc reveal">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span>
+          <h3>Aura Growth</h3>
           <p>Marketing y pauta orientados 100% al retorno de inversión, con cada peso medido.</p>
           <ul>
             <li>Campañas en Meta Ads</li>
@@ -132,10 +156,11 @@
             <li>Embudos de venta medibles</li>
             <li>Reportes de ROAS y CPA</li>
           </ul>
+          <a class="link" href="#cotizador" aria-label="Saber más sobre Aura Growth">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
-        <article class="svc" style="--hue:var(--violet)">
-          <span class="code">AURA / BRAND</span>
-          <h3>Aura <span>Brand</span></h3>
+        <article class="svc reveal">
+          <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg></span>
+          <h3>Aura Brand</h3>
           <p>Community management y social media para construir autoridad de marca.</p>
           <ul>
             <li>Gestión estratégica de redes</li>
@@ -143,6 +168,7 @@
             <li>Diseño de contenido</li>
             <li>Construcción de autoridad</li>
           </ul>
+          <a class="link" href="#cotizador" aria-label="Saber más sobre Aura Brand">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
       </div>
     </div>
@@ -150,18 +176,33 @@
 
   <section class="band" id="proyectos" aria-labelledby="h-proyectos" hidden>
     <div class="wrap">
-      <div class="head">
+      <div class="head reveal">
         <span class="eyebrow">Proyectos</span>
-        <h2 id="h-proyectos">Trabajos que hablan por nosotros</h2>
-        <p class="lead">Una selección de proyectos de Code, Growth y Brand.</p>
+        <h2 id="h-proyectos">Casos de éxito</h2>
+        <p class="lead">Trabajos de Code, Growth y Brand: el desafío de cada cliente y lo que logramos.</p>
       </div>
-      <div class="proj-grid" id="proj-grid"></div>
+      <div class="cases" id="proj-grid"></div>
+    </div>
+  </section>
+
+  <section class="band alt" id="proceso" aria-labelledby="h-proceso">
+    <div class="wrap">
+      <div class="head reveal">
+        <span class="eyebrow">Cómo trabajamos</span>
+        <h2 id="h-proceso">Del diagnóstico al crecimiento medible</h2>
+      </div>
+      <ol class="steps">
+        <li class="reveal"><h3>Diagnóstico</h3><p>Auditamos tu presencia digital, tu competencia y tus números actuales.</p></li>
+        <li class="reveal"><h3>Estrategia</h3><p>Definimos objetivos, canales y la arquitectura del ecosistema.</p></li>
+        <li class="reveal"><h3>Ejecución</h3><p>Diseñamos, desarrollamos y lanzamos campañas y contenido.</p></li>
+        <li class="reveal"><h3>Medición</h3><p>Reportamos resultados reales y optimizamos cada mes.</p></li>
+      </ol>
     </div>
   </section>
 
   <section class="band" id="cotizador" aria-labelledby="h-cotizador">
     <div class="wrap">
-      <div class="head">
+      <div class="head reveal">
         <span class="eyebrow">Cotizador de proyectos</span>
         <h2 id="h-cotizador">Armá tu proyecto y mirá una estimación al instante</h2>
         <p class="lead">Elegí lo que necesitás. Te mostramos un rango de inversión y plazo, y con un clic nos mandás la cotización para afinarla juntos.</p>
@@ -208,29 +249,35 @@
     </div>
   </section>
 
-  <section class="band" id="proceso" aria-labelledby="h-proceso">
+  <section class="cta" aria-labelledby="h-cta">
     <div class="wrap">
-      <div class="head">
-        <span class="eyebrow">Cómo trabajamos</span>
-        <h2 id="h-proceso">Del diagnóstico al crecimiento medible</h2>
+      <div class="cta-box reveal">
+        <h2 id="h-cta">¿Tenés un proyecto en mente?</h2>
+        <p>Contanos qué querés lograr y armamos juntos el camino para hacerlo realidad.</p>
+        <a class="btn" href="#contacto">Hablemos</a>
       </div>
-      <ol class="steps">
-        <li><h3>Diagnóstico</h3><p>Auditamos tu presencia digital, tu competencia y tus números actuales.</p></li>
-        <li><h3>Estrategia</h3><p>Definimos objetivos, canales y la arquitectura del ecosistema.</p></li>
-        <li><h3>Ejecución</h3><p>Diseñamos, desarrollamos y lanzamos campañas y contenido.</p></li>
-        <li><h3>Medición</h3><p>Reportamos resultados reales y optimizamos cada mes.</p></li>
-      </ol>
     </div>
   </section>
 
-  <section class="band" id="contacto" aria-labelledby="h-contacto">
+  <section class="band alt" id="contacto" aria-labelledby="h-contacto">
     <div class="wrap">
       <div class="contact">
-        <div class="head" style="margin:0">
+        <div class="info reveal">
           <span class="eyebrow">Contacto</span>
           <h2 id="h-contacto">Contanos qué querés construir</h2>
           <p class="lead">Respondemos en menos de 24 horas hábiles con una primera propuesta de enfoque.</p>
+          <ul>
+            <li>
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
+              <span><b>Email</b><a href="mailto:sistemas@auradigitalestudio.com">sistemas@auradigitalestudio.com</a></span>
+            </li>
+            <li>
+              <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <span><b>Tiempo de respuesta</b>Menos de 24 horas hábiles</span>
+            </li>
+          </ul>
         </div>
+        <div class="formcard reveal">
         <form id="c-form" novalidate>
           <div class="fields">
             <div>
@@ -242,8 +289,8 @@
               <p class="field-err" id="e-mail" role="alert"></p>
             </div>
           </div>
-          <fieldset style="border:0;margin:0;padding:0;display:grid;gap:.5rem">
-            <legend style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem">¿Qué necesitás?</legend>
+          <fieldset style="border:0;margin:0;padding:0;display:grid;gap:.5rem;min-width:0">
+            <legend style="font-size:.88rem;font-weight:500;color:var(--muted);margin-bottom:.5rem;padding:0">¿Qué necesitás?</legend>
             <div class="chips">
               <input type="checkbox" id="c-code" value="Code"><label for="c-code">Aura Code</label>
               <input type="checkbox" id="c-growth" value="Growth"><label for="c-growth">Aura Growth</label>
@@ -271,6 +318,7 @@
             <p>Si no se abre tu correo, escribinos a <code id="c-addr"></code></p>
           </div>
         </form>
+        </div>
       </div>
     </div>
   </section>
@@ -278,12 +326,38 @@
 
 <footer>
   <div class="wrap">
-    <span>© <span data-year>2026</span> Aura Digital Estudio</span>
-    <span class="flinks">
-      <a href="mailto:sistemas@auradigitalestudio.com">sistemas@auradigitalestudio.com</a>
-      <a href="privacidad.html">Política de Privacidad</a>
-      <button class="linkbtn" type="button" id="cookie-prefs" hidden>Preferencias de cookies</button>
-    </span>
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#inicio"><img src="img/logo-mark.webp" alt="" width="34" height="34">AURA</a>
+        <p>Estudio de diseño web, desarrollo de apps y marketing digital en Argentina.</p>
+      </div>
+      <div>
+        <h4>Servicios</h4>
+        <ul>
+          <li><a href="#servicios">Aura Code</a></li>
+          <li><a href="#servicios">Aura Growth</a></li>
+          <li><a href="#servicios">Aura Brand</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Empresa</h4>
+        <ul>
+          <li data-proj-link hidden><a href="#proyectos">Proyectos</a></li>
+          <li><a href="#proceso">Proceso</a></li>
+          <li><a href="#cotizador">Cotizador</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legales y contacto</h4>
+        <ul>
+          <li><a href="privacidad.html">Política de Privacidad</a></li>
+          <li><button class="linkbtn" type="button" id="cookie-prefs" hidden>Preferencias de cookies</button></li>
+          <li><a href="mailto:sistemas@auradigitalestudio.com">sistemas@auradigitalestudio.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbottom">© <span data-year>2026</span> Aura Digital Estudio. Todos los derechos reservados.</div>
   </div>
 </footer>
 

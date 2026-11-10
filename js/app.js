@@ -9,17 +9,36 @@
    Para agregar un proyecto, copiá el ejemplo comentado, sacale las // y completalo:
      servicio: "Code" | "Growth" | "Brand"
      imagen:   ruta a una imagen (recomendado 1280×800, .webp o .jpg) dentro de img/
+     desafio / resultado: una o dos frases cada uno
      link:     URL del proyecto o caso (opcional)
 */
 const PROYECTOS = [
   // {
   //   cliente: "[Completar] Nombre del cliente",
   //   servicio: "Code",
-  //   resultado: "[Completar] Una línea con el resultado real, ej.: sitio nuevo en 4 semanas",
+  //   desafio: "[Completar] Qué problema o necesidad tenía el cliente",
+  //   resultado: "[Completar] Resultado real, ej.: sitio nuevo en 4 semanas",
   //   imagen: "img/proyectos/cliente.webp",
   //   alt: "[Completar] Captura del sitio de Cliente",
   //   link: "https://www.ejemplo.com"
   // },
+];
+
+/* ===== NÚMEROS DE IMPACTO =====
+   Franja de cifras bajo el hero. Se muestran solo las que tengan un valor real:
+   mientras el valor diga [Completar] se oculta, y si ninguna está completa se oculta toda la franja.
+   Ej.: { valor: "+25", etiqueta: "Proyectos entregados" }  */
+const STATS = [
+  { valor: "[Completar]", etiqueta: "Proyectos entregados" },
+  { valor: "[Completar]", etiqueta: "Años de experiencia" },
+  { valor: "[Completar]", etiqueta: "Clientes" },
+  { valor: "[Completar]", etiqueta: "Satisfacción de clientes" }
+];
+
+/* ===== CLIENTES ("Confían en nosotros") =====
+   Logos de clientes reales (con su permiso). Vacío = la franja no se muestra.
+   Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional) */
+const CLIENTES = [
 ];
 
 /* ===== CONFIGURACIÓN =====
@@ -128,26 +147,32 @@ const GA_ID = "[G-XXXXXXX]";
     }
   }
 
-  /* ---------- Proyectos ---------- */
+  /* ---------- Proyectos (casos de éxito) ---------- */
   const SERV = { Code: "Aura Code", Growth: "Aura Growth", Brand: "Aura Brand" };
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const safeUrl = u => u && !/^\s*(javascript|data|vbscript):/i.test(u);
   const projSection = $("proyectos");
   if (projSection && Array.isArray(PROYECTOS) && PROYECTOS.length) {
     const grid = $("proj-grid");
-    const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
     PROYECTOS.forEach(p => {
-      const card = el("article", "proj");
+      const card = el("article", "case reveal");
       if (p.imagen) {
         const img = el("img");
-        img.src = p.imagen; img.alt = p.alt || ""; img.width = 640; img.height = 400;
+        img.src = p.imagen; img.alt = p.alt || ""; img.width = 800; img.height = 500;
         img.loading = "lazy"; img.decoding = "async";
         card.appendChild(img);
       }
       const body = el("div", "body");
-      body.appendChild(el("span", "pill", SERV[p.servicio] || p.servicio || ""));
+      body.appendChild(el("span", "tag", SERV[p.servicio] || p.servicio || ""));
       body.appendChild(el("h3", "", p.cliente || ""));
-      body.appendChild(el("p", "", p.resultado || ""));
-      if (p.link && !/^\s*(javascript|data|vbscript):/i.test(p.link)) {
-        const a = el("a", "more", "Ver proyecto");
+      const dl = el("dl");
+      [["Desafío", p.desafio], ["Resultado", p.resultado]].forEach(r => {
+        if (!r[1]) return;
+        const d = el("div"); d.appendChild(el("dt", "", r[0])); d.appendChild(el("dd", "", r[1])); dl.appendChild(d);
+      });
+      body.appendChild(dl);
+      if (safeUrl(p.link)) {
+        const a = el("a", "link", "Ver proyecto");
         a.href = p.link;
         if (/^https?:/i.test(p.link)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
         a.setAttribute("aria-label", "Ver proyecto de " + (p.cliente || ""));
@@ -157,8 +182,54 @@ const GA_ID = "[G-XXXXXXX]";
       grid.appendChild(card);
     });
     projSection.hidden = false;
-    const navItem = $("nav-proyectos");
-    if (navItem) navItem.hidden = false;
+    document.querySelectorAll("[data-proj-link]").forEach(n => { n.hidden = false; });
+  }
+
+  /* ---------- Números de impacto (se oculta si no hay valores reales) ---------- */
+  const isDone = v => v && !/\[completar\]/i.test(v);
+  const statsOk = Array.isArray(STATS) ? STATS.filter(s => isDone(s.valor)) : [];
+  if ($("numeros") && statsOk.length) {
+    const ul = $("stats-list");
+    statsOk.forEach(s => { const li = el("li", "reveal"); li.appendChild(el("b", "", s.valor)); li.appendChild(el("span", "", s.etiqueta || "")); ul.appendChild(li); });
+    $("numeros").hidden = false;
+  }
+
+  /* ---------- Clientes (se oculta si CLIENTES está vacío) ---------- */
+  if ($("clientes") && Array.isArray(CLIENTES) && CLIENTES.length) {
+    const ul = $("clients-list");
+    CLIENTES.forEach(c => {
+      if (!c.logo) return;
+      const li = el("li");
+      const img = el("img"); img.src = c.logo; img.alt = c.nombre || ""; img.loading = "lazy"; img.decoding = "async";
+      if (safeUrl(c.link)) { const a = el("a"); a.href = c.link; a.target = "_blank"; a.rel = "noopener noreferrer"; a.appendChild(img); li.appendChild(a); }
+      else li.appendChild(img);
+      ul.appendChild(li);
+    });
+    if (ul.children.length) $("clientes").hidden = false;
+  }
+
+  /* ---------- Menú hamburguesa ---------- */
+  const burger = $("burger"), menu = $("menu");
+  if (burger && menu) {
+    const setMenu = open => {
+      menu.classList.toggle("open", open);
+      burger.setAttribute("aria-expanded", String(open));
+      burger.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    };
+    burger.addEventListener("click", () => setMenu(!menu.classList.contains("open")));
+    menu.addEventListener("click", e => { if (e.target.closest("a")) setMenu(false); });
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && menu.classList.contains("open")) { setMenu(false); burger.focus(); } });
+    matchMedia("(min-width: 901px)").addEventListener("change", e => { if (e.matches) setMenu(false); });
+  }
+
+  /* ---------- Aparición suave al hacer scroll ---------- */
+  const revealEls = document.querySelectorAll(".reveal");
+  if (revealEls.length) {
+    if (!("IntersectionObserver" in window) || reduceMotion()) revealEls.forEach(n => n.classList.add("in"));
+    else {
+      const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold: .12, rootMargin: "0px 0px -40px 0px" });
+      revealEls.forEach(n => io.observe(n));
+    }
   }
 
   /* ---------- Logo 3D: sigue al mouse; sin mouse se balancea solo ---------- */
