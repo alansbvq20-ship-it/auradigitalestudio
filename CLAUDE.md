@@ -4,7 +4,7 @@ Sitio estático (GitHub Pages, rama `main`, dominio `auradigitalestudio.com` ví
 Diseño: tema oscuro neón cian/violeta; fuentes Michroma, Space Grotesk y JetBrains Mono. Textos en español rioplatense (vos).
 
 ## Estructura
-- `index.html` — página principal (hero con logo 3D, servicios, proyectos, cotizador, herramientas, proceso, contacto).
+- `index.html` — página principal (hero con logo 3D, servicios, proyectos, cotizador, proceso, contacto).
 - `privacidad.html` — Política de Privacidad (Ley 25.326).
 - `404.html` — página de error (usa rutas absolutas `/...`).
 - `css/styles.css` — todos los estilos.

@@ -189,47 +189,6 @@ const GA_ID = "[G-XXXXXXX]";
     stage.addEventListener("pointerleave", leave);
   })();
 
-  /* ---------- Calculadora de ROAS ---------- */
-  const ars = n => "$ " + Math.round(n).toLocaleString("es-AR");
-  if ($("r-inv")) {
-    const num = id => Math.max(0, +$(id).value || 0);
-    const roas = () => {
-      const inv = num("r-inv"), ven = num("r-ven"), tic = num("r-tic"), mar = Math.min(100, num("r-mar")) / 100;
-      const rev = ven * tic, r = inv ? rev / inv : 0, cpa = ven ? inv / ven : 0, be = mar ? 1 / mar : 0;
-      $("o-roas").textContent = inv ? r.toFixed(2) + "x" : "—";
-      $("o-cpa").textContent = ven ? ars(cpa) : "—";
-      $("o-be").textContent = mar ? be.toFixed(2) + "x" : "—";
-      const v = $("o-verdict"), s = v.querySelector("span");
-      if (!inv || !mar) { v.dataset.s = ""; s.textContent = "Completá inversión y margen para ver el resultado."; return; }
-      const profit = rev * mar - inv;
-      if (r >= be * 1.3) { v.dataset.s = "ok"; s.textContent = "Rentable: ganancia bruta estimada de " + ars(profit) + "."; }
-      else if (r >= be) { v.dataset.s = "warn"; s.textContent = "En equilibrio: margen ajustado de " + ars(profit) + ". Hay espacio para optimizar."; }
-      else { v.dataset.s = "bad"; s.textContent = "Bajo el mínimo: la campaña pierde " + ars(-profit) + ". Revisá segmentación o ticket."; }
-    };
-    ["r-inv", "r-ven", "r-tic", "r-mar"].forEach(id => $(id).addEventListener("input", roas)); roas();
-  }
-
-  /* ---------- Generador de UTM ---------- */
-  if ($("u-url")) {
-    const slug = t => t.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "_").replace(/[^a-z0-9_\-]/g, "");
-    const utm = () => {
-      const m = $("u-msg"), s = m.querySelector("span");
-      let raw = $("u-url").value.trim();
-      if (!raw) { $("u-out").textContent = ""; m.dataset.s = ""; s.textContent = "Pegá la dirección de tu página, por ejemplo auradigitalestudio.com/promo"; return; }
-      if (!/^https?:\/\//i.test(raw)) raw = "https://" + raw;
-      let u; try { u = new URL(raw); if (!u.hostname.includes(".")) throw 0; } catch (e) { $("u-out").textContent = ""; m.dataset.s = "bad"; s.textContent = "Esa dirección no parece válida. Revisá que tenga el dominio completo, por ejemplo tusitio.com"; return; }
-      u.searchParams.set("utm_source", $("u-src").value);
-      u.searchParams.set("utm_medium", $("u-med").value);
-      const c = slug($("u-camp").value); if (c) u.searchParams.set("utm_campaign", c); else u.searchParams.delete("utm_campaign");
-      $("u-out").textContent = u.toString(); m.dataset.s = "ok"; s.textContent = "Los espacios se convierten en guiones bajos y todo pasa a minúsculas.";
-    };
-    ["u-url", "u-src", "u-med", "u-camp"].forEach(id => $(id).addEventListener("input", utm)); utm();
-    $("u-copy").addEventListener("click", () => {
-      const t = $("u-out").textContent, b = $("u-copy");
-      navigator.clipboard.writeText(t).then(() => { b.textContent = "Copiado"; setTimeout(() => b.textContent = "Copiar", 1600); })
-        .catch(() => { const r = document.createRange(); r.selectNodeContents($("u-out")); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); b.textContent = "Seleccionado"; });
-    });
-  }
 
   /* ---------- Cotizador ---------- */
   /* Precios de referencia en USD: editalos a gusto.
