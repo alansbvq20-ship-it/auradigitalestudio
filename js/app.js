@@ -39,6 +39,9 @@ const STATS = [
    Logos de clientes reales (con su permiso). Vacío = la franja no se muestra.
    Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional) */
 const CLIENTES = [
+  { nombre: "Lebloc", logo: "img/clientes/lebloc.png" },
+  { nombre: "Roverano", logo: "img/clientes/roverano.png" },
+  { nombre: "SBVQ", logo: "img/clientes/sbvq.jpg" }
 ];
 
 /* ===== CONFIGURACIÓN =====
@@ -197,15 +200,25 @@ const GA_ID = "[G-XXXXXXX]";
   /* ---------- Clientes (se oculta si CLIENTES está vacío) ---------- */
   if ($("clientes") && Array.isArray(CLIENTES) && CLIENTES.length) {
     const ul = $("clients-list");
-    CLIENTES.forEach(c => {
-      if (!c.logo) return;
+    const make = (c, clone) => {
       const li = el("li");
-      const img = el("img"); img.src = c.logo; img.alt = c.nombre || ""; img.loading = "lazy"; img.decoding = "async";
-      if (safeUrl(c.link)) { const a = el("a"); a.href = c.link; a.target = "_blank"; a.rel = "noopener noreferrer"; a.appendChild(img); li.appendChild(a); }
+      const img = el("img"); img.src = c.logo; img.alt = clone ? "" : (c.nombre || ""); img.width = 72; img.height = 72; img.decoding = "async";
+      if (safeUrl(c.link)) { const a = el("a"); a.href = c.link; a.target = "_blank"; a.rel = "noopener noreferrer"; if (clone) a.tabIndex = -1; a.appendChild(img); li.appendChild(a); }
       else li.appendChild(img);
-      ul.appendChild(li);
-    });
-    if (ul.children.length) $("clientes").hidden = false;
+      if (clone) { li.setAttribute("aria-hidden", "true"); li.dataset.clone = "1"; }
+      return li;
+    };
+    const base = CLIENTES.filter(c => c.logo);
+    base.forEach(c => ul.appendChild(make(c, false)));
+    if (ul.children.length) {
+      $("clientes").hidden = false;
+      /* Cinta infinita: se repite la lista hasta cubrir el ancho y se duplica el bloque para que el loop no deje huecos */
+      const unit = 72 + 56, vw = Math.max(window.innerWidth, ul.parentNode.clientWidth, 1200);
+      const k = Math.max(1, Math.ceil(vw / (base.length * unit)));
+      const total = base.length * k * 2;
+      for (let i = base.length; i < total; i++) ul.appendChild(make(base[i % base.length], true));
+      ul.style.setProperty("--dur", Math.round(base.length * k * unit / 45) + "s");
+    }
   }
 
   /* ---------- Menú hamburguesa ---------- */
