@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Michroma&display=swap">
 <link rel="stylesheet" href="css/styles.css?v=4">
-<link rel="stylesheet" href="css/logo.css?v=2">
+<link rel="stylesheet" href="css/logo.css?v=3">
 <script>document.documentElement.classList.add("js")</script>
 
 <script type="application/ld+json">
@@ -69,7 +69,7 @@
 
 <nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="brand" href="#inicio"><svg class="nav-logo" viewBox="70 0 260 260" width="34" height="34" aria-hidden="true" focusable="false"><defs><linearGradient id="nl-tube" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#050d33"/><stop offset=".5" stop-color="#16328f"/><stop offset="1" stop-color="#040a24"/></linearGradient></defs><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M118 222 L190 52 Q200 32 210 52" stroke="url(#nl-tube)" stroke-width="26"/><path d="M118 222 L190 52 Q200 32 210 52" stroke="#e8f7ff" stroke-width="7"/><path d="M168 196 L200 120 L232 196" stroke="#d6d0ff" stroke-width="7"/><path d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="url(#nl-tube)" stroke-width="22"/><path d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="#d9ecff" stroke-width="7"/><path d="M210 52 L282 222" stroke="url(#nl-tube)" stroke-width="26"/><path d="M210 52 L282 222" stroke="#e8f7ff" stroke-width="7"/></g></svg>AURA</a>
+    <a class="brand" href="#inicio"><svg class="nav-logo" viewBox="70 0 260 260" width="34" height="34" aria-hidden="true" focusable="false"><defs><linearGradient id="nl-tube" gradientUnits="userSpaceOnUse" x1="80" y1="40" x2="320" y2="240"><stop offset="0" stop-color="#0a1a5c"/><stop offset=".5" stop-color="#1f4fd1"/><stop offset="1" stop-color="#0a1650"/></linearGradient></defs><g fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M118 222 L190 52 Q200 32 210 52 L282 222" stroke="url(#nl-tube)" stroke-width="26"/><path d="M118 222 L190 52 Q200 32 210 52 L282 222" stroke="#e8f7ff" stroke-width="7"/><path d="M168 196 L200 120 L232 196" stroke="#d6d0ff" stroke-width="7"/><path d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="url(#nl-tube)" stroke-width="22"/><path d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="#d9ecff" stroke-width="7"/></g><g fill="none" stroke-linecap="butt"><path d="M255.7 160 L272.7 200" stroke="url(#nl-tube)" stroke-width="26"/><path d="M255.7 160 L272.7 200" stroke="#e8f7ff" stroke-width="7"/></g></svg>AURA</a>
     <ul class="menu" id="menu">
       <li><a href="#servicios">Servicios</a></li>
       <li data-proj-link hidden><a href="#proyectos">Proyectos</a></li>
@@ -104,8 +104,8 @@
             <stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#7cc6ff"/>
             <stop offset=".5" stop-color="#0d2a8a"/><stop offset="1" stop-color="#3d9bff"/>
           </linearGradient>
-          <linearGradient id="hl-tube" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#050d33"/><stop offset=".5" stop-color="#16328f"/><stop offset="1" stop-color="#040a24"/>
+          <linearGradient id="hl-tube" gradientUnits="userSpaceOnUse" x1="80" y1="40" x2="320" y2="240">
+            <stop offset="0" stop-color="#0a1a5c"/><stop offset=".5" stop-color="#1f4fd1"/><stop offset="1" stop-color="#0a1650"/>
           </linearGradient>
           <linearGradient id="hl-swoosh" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0" stop-color="#3ab8ff"/><stop offset=".55" stop-color="#1e6bff"/><stop offset="1" stop-color="#6a5cff"/>
@@ -125,15 +125,18 @@
           <path d="M168 196 L200 120 L232 196" stroke="var(--violet)"/>
           <path d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="url(#hl-swoosh)"/>
         </g>
-        <!-- woven order: left leg + inner A, then the ring, then the right leg over it -->
+        <!-- one continuous A (no seam at the apex), the ring on top, then a short patch of the right leg over the ring's lower pass = woven look -->
         <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-          <path class="tube t1" d="M118 222 L190 52 Q200 32 210 52" stroke="url(#hl-tube)" stroke-width="18"/>
+          <path class="tube t1" d="M118 222 L190 52 Q200 32 210 52 L282 222" stroke="url(#hl-tube)" stroke-width="18"/>
           <path class="neon n1" pathLength="1" d="M118 222 L190 52 Q200 32 210 52" stroke="var(--core)" stroke-width="2.6"/>
+          <path class="neon n2" pathLength="1" d="M210 52 L282 222" stroke="var(--core)" stroke-width="2.6"/>
           <path class="neon n3" pathLength="1" d="M168 196 L200 120 L232 196" stroke="#d6d0ff" stroke-width="2.4"/>
           <path class="tube t4" d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="url(#hl-tube)" stroke-width="15"/>
           <path class="neon n4" pathLength="1" d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" stroke="#d9ecff" stroke-width="2.6"/>
-          <path class="tube t2" d="M210 52 L282 222" stroke="url(#hl-tube)" stroke-width="18"/>
-          <path class="neon n2" pathLength="1" d="M210 52 L282 222" stroke="var(--core)" stroke-width="2.6"/>
+        </g>
+        <g class="patch" fill="none" stroke-linecap="butt">
+      <path d="M255.7 160 L272.7 200" stroke="url(#hl-tube)" stroke-width="18"/>
+      <path d="M255.7 160 L272.7 200" stroke="var(--core)" stroke-width="2.6"/>
         </g>
         <!-- traveling light along the swoosh -->
         <path class="spark" pathLength="1" d="M86 182 C150 128 300 104 314 148 C324 182 250 200 176 214" fill="none" stroke="#ffffff" stroke-width="4" stroke-linecap="round" filter="url(#hl-glow)"/>
