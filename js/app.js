@@ -232,34 +232,6 @@ const GA_ID = "[G-XXXXXXX]";
     }
   }
 
-  /* ---------- Logo 3D: sigue al mouse; sin mouse se balancea solo ---------- */
-  if ($("logo3d")) (function () {
-    const stage = $("logo3d"), tilt = $("tilt"), MAX = 16;
-    if (reduceMotion()) { tilt.classList.remove("idle"); return; }
-    let raf = 0, back = 0;
-    function move(e) {
-      const r = stage.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        tilt.classList.remove("idle"); tilt.classList.add("live");
-        tilt.style.setProperty("--ry", (x * MAX * 2).toFixed(2) + "deg");
-        tilt.style.setProperty("--rx", (-y * MAX * 2).toFixed(2) + "deg");
-        tilt.style.setProperty("--gx", ((x + .5) * 100).toFixed(1) + "%");
-        tilt.style.setProperty("--gy", ((y + .5) * 100).toFixed(1) + "%");
-        tilt.style.setProperty("--go", "1");
-      });
-    }
-    function leave() {
-      cancelAnimationFrame(raf);
-      tilt.classList.remove("live");
-      tilt.style.setProperty("--rx", "0deg"); tilt.style.setProperty("--ry", "0deg"); tilt.style.setProperty("--go", "0");
-      clearTimeout(back); back = setTimeout(() => tilt.classList.add("idle"), 700);
-    }
-    stage.addEventListener("pointermove", e => { if (e.pointerType === "mouse") { clearTimeout(back); move(e); } });
-    stage.addEventListener("pointerleave", leave);
-  })();
-
 
   /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------
      w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%. */
