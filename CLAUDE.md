@@ -4,7 +4,7 @@ Sitio estático (GitHub Pages, rama `main`, dominio `auradigitalestudio.com` ví
 Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifras: lo que falte va como `[Completar]`.
 
 ## Estructura
-- `index.html` — página principal. Orden: menú, hero, números de impacto, clientes, servicios, proyectos, proceso, cotizador, CTA, contacto, footer.
+- `index.html` — página principal. Orden: menú, hero, números de impacto, clientes, servicios, proyectos, proceso, "Armá tu proyecto" (`#cotizador`), CTA, contacto, footer.
 - `privacidad.html` — Política de Privacidad (Ley 25.326).
 - `404.html` — página de error (usa rutas absolutas `/...`).
 - `css/styles.css` — todos los estilos (sistema de diseño abajo).
@@ -29,10 +29,10 @@ Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifra
 - `WHATSAPP_NUMBER`: mientras sea `[549XXXXXXXXXX]` el botón flotante queda oculto.
 - `GA_ID`: mientras sea `[G-XXXXXXX]` no se carga Analytics ni se muestra el banner de cookies. Con ID válido, GA4 solo carga si el visitante acepta (`localStorage.aura_consent`).
 - `STUDIO_EMAIL`, `WEB3FORMS_KEY`: destino del formulario (Web3Forms; si falla, opción "Abrir en mi correo").
-- Precios del cotizador: objeto `Q` (USD).
+- "Armá tu proyecto": objeto `Q` (opciones y semanas `w`). La web no muestra precios: el cliente elige opciones y pide cotización.
 
 ## Notas
-- Eventos GA4: `generate_lead` y `form_submit` (formulario), `whatsapp_click`, `enviar_cotizacion`.
+- Eventos GA4: `generate_lead` y `form_submit` (formulario), `whatsapp_click`, `solicitar_cotizacion`.
 - Formulario: honeypot `botcheck`, bloqueo de reenvío de 30 s (`localStorage.aura_last_send`), validación en español, checkbox de privacidad obligatorio.
 - Al agregar páginas, copiar el nav simple, el footer y el botón `#wa-btn` de `privacidad.html`.
 - Pendientes de contenido: buscar `[Completar]` en el proyecto.

@@ -261,49 +261,43 @@ const GA_ID = "[G-XXXXXXX]";
   })();
 
 
-  /* ---------- Cotizador ---------- */
-  /* Precios de referencia en USD: editalos a gusto.
-     site/extras: min y max (rango) y w (semanas de trabajo). growth/brand: m (USD por mes).
-     time.k: multiplicador del precio del proyecto; el plazo urgente reduce las semanas un 30%. */
+  /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------
+     w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%. */
   const Q = {
     site: [
-      { id: "none", name: "No necesito sitio", note: "Solo marketing o redes", min: 0, max: 0, w: 0 },
-      { id: "landing", name: "Landing page", note: "1 página de conversión", min: 400, max: 700, w: 2 },
-      { id: "corp", name: "Sitio corporativo", note: "Hasta 6 secciones", min: 900, max: 1500, w: 4 },
-      { id: "ecom", name: "E-commerce", note: "Tienda con pagos y envíos", min: 1600, max: 2800, w: 6 },
-      { id: "app", name: "Aplicación web", note: "Usuarios, panel, lógica a medida", min: 3000, max: 6000, w: 10 }
+      { id: "none", name: "No necesito sitio", note: "Solo marketing o redes", w: 0 },
+      { id: "landing", name: "Landing page", note: "1 página de conversión", w: 2 },
+      { id: "corp", name: "Sitio corporativo", note: "Hasta 6 secciones", w: 4 },
+      { id: "ecom", name: "E-commerce", note: "Tienda con pagos y envíos", w: 6 },
+      { id: "app", name: "Aplicación web", note: "Usuarios, panel, lógica a medida", w: 10 }
     ],
     extras: [
-      { id: "seo", name: "SEO inicial", note: "Estructura, metadatos, velocidad", min: 150, max: 250, w: 0 },
-      { id: "blog", name: "Blog autogestionable", note: "Panel para publicar", min: 200, max: 350, w: 1 },
-      { id: "lang", name: "Multilenguaje", note: "Español + inglés", min: 250, max: 400, w: 1 },
-      { id: "integ", name: "Integraciones", note: "CRM, WhatsApp, pasarelas", min: 200, max: 500, w: 1 }
+      { id: "seo", name: "SEO inicial", note: "Estructura, metadatos, velocidad", w: 0 },
+      { id: "blog", name: "Blog autogestionable", note: "Panel para publicar", w: 1 },
+      { id: "lang", name: "Multilenguaje", note: "Español + inglés", w: 1 },
+      { id: "integ", name: "Integraciones", note: "CRM, WhatsApp, pasarelas", w: 1 }
     ],
     growth: [
-      { id: "g0", name: "Sin pauta", note: "", m: 0 },
-      { id: "g1", name: "Un canal", note: "Meta Ads o Google Ads", m: 300 },
-      { id: "g2", name: "Meta + Google", note: "Embudo completo y reportes", m: 550 }
+      { id: "g0", name: "Sin pauta", note: "" },
+      { id: "g1", name: "Un canal", note: "Meta Ads o Google Ads" },
+      { id: "g2", name: "Meta + Google", note: "Embudo completo y reportes" }
     ],
     brand: [
-      { id: "b0", name: "Sin gestión de redes", note: "", m: 0 },
-      { id: "b1", name: "Esencial", note: "8 piezas al mes · 1 red", m: 250 },
-      { id: "b2", name: "Pro", note: "16 piezas + reels · 2 redes", m: 480 }
+      { id: "b0", name: "Sin gestión de redes", note: "" },
+      { id: "b1", name: "Esencial", note: "8 piezas al mes · 1 red" },
+      { id: "b2", name: "Pro", note: "16 piezas + reels · 2 redes" }
     ],
     time: [
-      { id: "std", name: "Estándar", note: "Plazo recomendado", k: 1 },
-      { id: "fast", name: "Urgente", note: "Prioridad en agenda · +25%", k: 1.25 }
+      { id: "std", name: "Estándar", note: "Plazo recomendado" },
+      { id: "fast", name: "Urgente", note: "Prioridad en agenda" }
     ]
   };
-  const num2 = n => Math.round(n).toLocaleString("es-AR");
-  const usd = n => "USD " + num2(n);
-  const range = (a, b) => usd(a) + " – " + num2(b);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   let quoteText = "";
   if ($("q-form")) {
     const opt = (group, o, type, checked) => {
       const id = "q-" + group + "-" + o.id;
-      const price = o.min != null ? (o.max ? range(o.min, o.max) : "") : (o.m ? usd(o.m) + "/mes" : "");
-      return '<div class="opt"><input type="' + type + '" name="q-' + group + '" id="' + id + '" value="' + o.id + '"' + (checked ? " checked" : "") + '><label for="' + id + '">' + esc(o.name) + (o.note ? "<small>" + esc(o.note) + "</small>" : "") + (price ? "<em>" + price + "</em>" : "") + "</label></div>";
+      return '<div class="opt"><input type="' + type + '" name="q-' + group + '" id="' + id + '" value="' + o.id + '"' + (checked ? " checked" : "") + '><label for="' + id + '">' + esc(o.name) + (o.note ? "<small>" + esc(o.note) + "</small>" : "") + "</label></div>";
     };
     $("q-site").innerHTML = Q.site.map(o => opt("site", o, "radio", o.id === "corp")).join("");
     $("q-extras").innerHTML = Q.extras.map(o => opt("extras", o, "checkbox", o.id === "seo")).join("");
@@ -318,31 +312,25 @@ const GA_ID = "[G-XXXXXXX]";
       document.querySelectorAll("#q-extras input").forEach(i => { i.disabled = !hasSite; if (!hasSite) i.checked = false; });
       document.querySelectorAll("#q-time input").forEach(i => { i.disabled = !hasSite; });
       const exOn = hasSite ? Q.extras.filter(o => $("q-extras-" + o.id).checked) : [];
-      let min = site.min, max = site.max, w = site.w;
-      exOn.forEach(o => { min += o.min; max += o.max; w += o.w; });
-      const k = hasSite ? t.k : 1;
-      min = Math.round(min * k); max = Math.round(max * k);
+      let w = site.w;
+      exOn.forEach(o => { w += o.w; });
       const weeks = hasSite && t.id === "fast" ? Math.max(1, Math.ceil(w * 0.7)) : w;
-      const month = gr.m + br.m;
-      $("q-once").textContent = max ? range(min, max) : "—";
-      $("q-month").textContent = month ? usd(month) + " / mes" : "—";
       const lines = [];
       if (hasSite) lines.push(["Aura Code", site.name]);
       exOn.forEach(o => lines.push(["Extra", o.name]));
-      if (gr.m) lines.push(["Aura Growth", gr.name]);
-      if (br.m) lines.push(["Aura Brand", "Redes " + br.name]);
+      if (gr.id !== "g0") lines.push(["Aura Growth", gr.name]);
+      if (br.id !== "b0") lines.push(["Aura Brand", "Redes " + br.name]);
       if (hasSite) lines.push(["Plazo", t.name]);
-      $("q-lines").innerHTML = lines.map(l => "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1]) + "</dd></div>").join("");
+      $("q-lines").innerHTML = lines.length ? lines.map(l => "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1]) + "</dd></div>").join("") : "<div><dd>Elegí al menos una opción.</dd></div>";
       const weeksTxt = weeks + (weeks === 1 ? " semana" : " semanas");
       $("q-weeks").textContent = weeks ? "Entrega estimada del sitio: " + weeksTxt + "." : "";
-      const nothing = !max && !month;
+      const nothing = !hasSite && gr.id === "g0" && br.id === "b0";
       $("q-send").disabled = nothing;
-      quoteText = nothing ? "" : "Cotización desde la web:\n" + lines.map(l => "• " + l[0] + ": " + l[1]).join("\n") +
-        (max ? "\nProyecto estimado: " + range(min, max) : "") + (month ? "\nMensual estimado: " + usd(month) : "") + (weeks ? "\nEntrega estimada: " + weeksTxt : "");
+      quoteText = nothing ? "" : "Solicitud de cotización:\n" + lines.map(l => "• " + l[0] + ": " + l[1]).join("\n") + (weeks ? "\nEntrega estimada: " + weeksTxt : "");
     };
     $("q-form").addEventListener("change", quote); quote();
     $("q-send").addEventListener("click", () => {
-      track("enviar_cotizacion", { proyecto: $("q-once").textContent, mensual: $("q-month").textContent });
+      track("solicitar_cotizacion", { opciones: quoteText.split("\n").length - 1 });
       $("c-msg").value = quoteText + "\n\nComentarios: ";
       const map = { "Aura Code": "c-code", "Aura Growth": "c-growth", "Aura Brand": "c-brand" };
       ["c-code", "c-growth", "c-brand"].forEach(id => $(id).checked = false);
