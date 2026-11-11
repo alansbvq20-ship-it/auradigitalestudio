@@ -7,13 +7,13 @@ Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifra
 - `index.html` — página principal. Orden: menú, hero, números de impacto, clientes, servicios, proyectos, proceso, "Armá tu proyecto" (`#cotizador`), CTA, contacto, footer.
 - `privacidad.html` — Política de Privacidad (Ley 25.326).
 - `404.html` — página de error (usa rutas absolutas `/...`).
-- `css/styles.css` — todos los estilos (sistema de diseño abajo).
+- `css/styles.css` — estilos del sitio (`css/logo.css`: logo animado del hero y ícono del menú) (sistema de diseño abajo).
 - `js/app.js` — toda la lógica; se carga con `defer` en las 3 páginas y cada bloque se activa solo si existen sus elementos.
 - `img/` — `logo.jpg`/`logo.webp` (con `<picture>`), `logo-mark.webp` (ícono "A" del menú), `og-image.jpg` (1200×630), `icon-192.png`, `icon-512.png`.
 - Raíz: `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `site.webmanifest`, `robots.txt`, `sitemap.xml`, `CNAME`.
 
 ## Sistema de diseño ("corporativo tech")
-- **Paleta** (variables en `:root`): fondo `--bg #07080f`, secciones alternadas `--bg-2 #0d0f19` (clase `.band.alt`), tarjetas `--card #11141f`, bordes `--line`/`--line-2`, texto `--text`/`--muted`. Acento único `--cyan #43f1ff` (botones, links, íconos); violeta `--violet #a46cff` solo en detalles (fondo sutil del hero, degradado del CTA).
+- **Paleta** (variables en `:root`): fondo azul noche `--bg #070d26`, secciones alternadas `--bg-2 #0b1438` (clase `.band.alt`), tarjetas y formularios `--card #0f1a45`, footer `--footer #050a1f`, menú `rgba(7,13,38,.85)` con desenfoque, bordes `--line` `rgba(92,200,255,.15)` / `--line-2` (más fuerte), texto `--text` y `--muted #a9b8e0` (gris azulado). Acento azul eléctrico `--accent #1e90ff` (bordes, íconos, foco, checkboxes, opciones elegidas, brillos `rgba(30,144,255,…)`); acento claro `--accent-text #5cc8ff` (links, textos destacados, hovers); botones `--btn #1565d8` (hover `--btn-hover #1a73e8`) con texto blanco, que da contraste AA (con `#1e90ff` de fondo el texto blanco no llega a 4,5:1); violeta `--violet #6a5cff` solo en detalles (fondo sutil del hero, degradado del CTA). El logo animado define sus propios colores dentro de `.hero-logo` (`css/logo.css`). `theme-color` y `theme_color` = `#1e90ff`.
 - **Tipografía**: Inter (400–800). Títulos 800 con interlineado ~1.05–1.1 (h1 40–72px). Michroma solo en el nombre "AURA" del menú/footer.
 - **Botones** `.btn` (rectangulares, radio 7px, sólidos cian), `.btn.ghost`, `.btn.sm`. Links con flecha `.link`.
 - **Tarjetas** planas con borde fino, sin brillos. **Íconos** de línea en SVG inline (`.ico`).

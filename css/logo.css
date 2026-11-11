@@ -39,3 +39,8 @@
 .nav-logo{width:34px;height:34px;display:block;overflow:visible;
   filter:drop-shadow(0 0 3px rgba(30,144,255,.75)) drop-shadow(0 0 8px rgba(30,144,255,.4));transition:filter .25s ease}
 .brand:hover .nav-logo{filter:drop-shadow(0 0 4px rgba(92,200,255,.95)) drop-shadow(0 0 12px rgba(30,144,255,.75))}
+
+/* Resplandor azul radial detrás del logo del hero */
+.hero-glow{position:relative;isolation:isolate}
+.hero-glow::before{content:"";position:absolute;z-index:-1;left:50%;top:50%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);
+  background:radial-gradient(closest-side,rgba(30,144,255,.24),rgba(30,144,255,.12) 45%,transparent 75%);filter:blur(24px);pointer-events:none}
