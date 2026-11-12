@@ -70,13 +70,12 @@ const STATS = [
 
 /* ===== CLIENTES ("Confían en nosotros") =====
    Logos de clientes reales (con su permiso). Vacío = la franja no se muestra.
-   Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional).
-   Cada logo va en una tarjeta blanca de 160×72; si el logo es claro o tiene fondo negro, agregá fondo: "oscuro". */
+   Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional) */
 const CLIENTES = [
   { nombre: "Lebloc", logo: "img/clientes/lebloc.png" },
   { nombre: "Roverano", logo: "img/clientes/roverano.png" },
   { nombre: "SBVQ", logo: "img/clientes/sbvq.jpg" },
-  { nombre: "Enclave", logo: "img/clientes/enclave.jpeg", fondo: "oscuro" }
+  { nombre: "Enclave", logo: "img/clientes/enclave.jpeg" }
 ];
 
 /* ===== SERVICIOS ACTIVOS =====
@@ -322,10 +321,9 @@ const GA_ID = "[G-XXXXXXX]";
     const ul = $("clients-list");
     const make = (c, clone) => {
       const li = el("li");
-      const img = el("img"); img.src = c.logo; img.alt = clone ? "" : (c.nombre || ""); img.decoding = "async";
+      const img = el("img"); img.src = c.logo; img.alt = clone ? "" : (c.nombre || ""); img.width = 72; img.height = 72; img.decoding = "async";
       if (safeUrl(c.link)) { const a = el("a"); a.href = c.link; a.target = "_blank"; a.rel = "noopener noreferrer"; if (clone) a.tabIndex = -1; a.appendChild(img); li.appendChild(a); }
       else li.appendChild(img);
-      if (c.fondo === "oscuro") li.classList.add("dark");
       if (clone) { li.setAttribute("aria-hidden", "true"); li.dataset.clone = "1"; }
       return li;
     };
@@ -334,7 +332,7 @@ const GA_ID = "[G-XXXXXXX]";
     if (ul.children.length) {
       $("clientes").hidden = false;
       /* Cinta infinita: se repite la lista hasta cubrir el ancho y se duplica el bloque para que el loop no deje huecos */
-      const unit = 160 + 56, vw = Math.max(window.innerWidth, ul.parentNode.clientWidth, 1200);
+      const unit = 72 + 56, vw = Math.max(window.innerWidth, ul.parentNode.clientWidth, 1200);
       const k = Math.max(1, Math.ceil(vw / (base.length * unit)));
       const total = base.length * k * 2;
       for (let i = base.length; i < total; i++) ul.appendChild(make(base[i % base.length], true));
