@@ -9,7 +9,7 @@ Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifra
 - `404.html` — página de error (usa rutas absolutas `/...`).
 - `css/styles.css` — estilos del sitio (`css/logo.css`: logo animado del hero y ícono del menú) (sistema de diseño abajo).
 - `js/app.js` — toda la lógica; se carga con `defer` en las 3 páginas y cada bloque se activa solo si existen sus elementos.
-- `img/` — `logo.jpg`/`logo.webp` (con `<picture>`), `logo-mark.webp` (ícono "A" del menú), `og-image.jpg` (1200×630), `icon-192.png`, `icon-512.png`.
+- `img/` — `logo.jpg`/`logo.webp` (con `<picture>`), `logo-mark.webp` (ícono "A" del menú), `og-image.jpg` (1200×630; los metas usan `?v=2`), `logo-cuadrado.png` (512×512, logo del JSON-LD), `icon-192.png`, `icon-512.png`.
 - Raíz: `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `site.webmanifest`, `robots.txt`, `sitemap.xml`, `CNAME`.
 
 ## Sistema de diseño ("corporativo tech")
@@ -23,10 +23,12 @@ Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifra
 - Responsive probado a 390, 768 y 1280 px sin scroll horizontal.
 
 ## Configuración (arriba de `js/app.js`)
-- `PROYECTOS`: casos de éxito (`cliente`, `servicio`, `desafio`, `resultado`, `imagen`, `alt`, `link`). Vacío = sección y links (`[data-proj-link]`) ocultos.
+- `PROYECTOS`: casos de éxito (`cliente`, `tipo` ("Sistema web" / "App a medida"), `dispositivo` ("desktop" = marco de navegador 16:10, "mobile" = marco de celular), `desafio`, `solucion`, `imagen` + `alt` o `capturas: [{src, alt}]` para varias, `link` opcional). Las capturas están en `img/proyectos/`; al tocarlas se abren en un lightbox (flechas si hay varias, Escape o clic afuera cierran). Vacío = sección y links (`[data-proj-link]`) ocultos.
 - `STATS`: franja de números. Valores `[Completar]` no se muestran; si no hay ninguno real, se oculta la franja.
-- `CLIENTES`: logos de "Confían en nosotros" (cinta infinita al final de la página, antes del footer; archivos en `img/clientes/`). Vacío = franja oculta.
+- `CLIENTES`: logos de "Confían en nosotros" (cinta infinita al final de la página, antes del footer; archivos en `img/clientes/`). Cada logo va en una tarjeta blanca de 160×72; con `fondo: "oscuro"` la tarjeta es negra (para logos de fondo negro, como Enclave). Vacío = franja oculta.
 - `SERVICIOS_ACTIVOS`: `{ Code: true, Growth: false, Brand: false }`. Hoy solo Aura Code está activo; Growth (publicidad) y Brand (redes) figuran como "Próximamente": tarjetas atenuadas con distintivo y sin link, grupos del cotizador deshabilitados (no entran al resumen ni al texto de "Solicitar cotización"), chips de Growth/Brand ocultos en el formulario y footer con "próximamente". Todo el código y el HTML de Growth y Brand sigue ahí: para reactivar un servicio ponelo en `true` (el HTML marca esos elementos con `data-servicio` / `data-soon` / `data-active-only`) y revisá los textos que hoy hablan solo de desarrollo (hero, título y meta description/Open Graph, JSON-LD con un solo servicio, footer, proceso).
+- `COTIZADOR_COMPLETO`: `false` = el cotizador solo ofrece "Tipo de proyecto" (sin extras ni plazo urgente; los grupos están en el HTML con `data-cotizador-completo`). `true` los vuelve a mostrar.
+- Servicios: la sección "Lo que hacemos" tiene 4 tarjetas de desarrollo (landing, sitio institucional, tienda online, app a medida). Las tarjetas de Growth y Brand siguen en el HTML dentro de `#servicios-extra` (oculto) y aparecen al activar el servicio; la nota "Próximamente" (`#soon-note`) se arma sola según `SERVICIOS_ACTIVOS`.
 - `WHATSAPP_NUMBER`: mientras sea `[549XXXXXXXXXX]` el botón flotante queda oculto.
 - `GA_ID`: mientras sea `[G-XXXXXXX]` no se carga Analytics ni se muestra el banner de cookies. Con ID válido, GA4 solo carga si el visitante acepta (`localStorage.aura_consent`).
 - `STUDIO_EMAIL`, `WEB3FORMS_KEY`: destino del formulario (Web3Forms; si falla, opción "Abrir en mi correo").

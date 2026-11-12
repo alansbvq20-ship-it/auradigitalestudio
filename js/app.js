@@ -7,21 +7,54 @@
 /* ===== PROYECTOS (Portfolio) =====
    Si el array está vacío, la sección "Proyectos" y su link del menú no se muestran.
    Para agregar un proyecto, copiá el ejemplo comentado, sacale las // y completalo:
-     servicio: "Code" | "Growth" | "Brand"
-     imagen:   ruta a una imagen (recomendado 1280×800, .webp o .jpg) dentro de img/
-     desafio / resultado: una o dos frases cada uno
+     tipo:     etiqueta del tipo de proyecto (ej.: "Sistema web", "App a medida"); si falta se usa servicio: "Code" | "Growth" | "Brand"
+     dispositivo: "desktop" (captura de escritorio, marco de navegador) o "mobile" (celular)
+     imagen:   ruta a una captura (.webp o .jpg) dentro de img/proyectos/ + alt: su descripción
+     capturas: alternativa a imagen/alt, varias: [{ src: "...", alt: "..." }, ...] (lightbox con flechas)
+     desafio / solucion: una frase cada uno
      link:     URL del proyecto o caso (opcional)
 */
 const PROYECTOS = [
-  // {
-  //   cliente: "[Completar] Nombre del cliente",
-  //   servicio: "Code",
-  //   desafio: "[Completar] Qué problema o necesidad tenía el cliente",
-  //   resultado: "[Completar] Resultado real, ej.: sitio nuevo en 4 semanas",
-  //   imagen: "img/proyectos/cliente.webp",
-  //   alt: "[Completar] Captura del sitio de Cliente",
-  //   link: "https://www.ejemplo.com"
-  // },
+  {
+    cliente: "Somos Roverano — Sistema de Recursos Humanos",
+    tipo: "Sistema web",
+    dispositivo: "desktop",
+    desafio: "Gestionar recibos de sueldo, vacaciones, licencias y firma digital de los empleados.",
+    solucion: "Plataforma web con panel de administración, seguimiento de conformidad de recibos y validación de identidad.",
+    imagen: "img/proyectos/somos-roverano-oscuro.jpg",
+    alt: "Panel de administración de Somos Roverano: empleados activos, recibos pendientes de conformidad, vacaciones, licencias e identidad"
+  },
+  {
+    cliente: "NEXO Roverano — CRM comercial",
+    tipo: "Sistema web",
+    dispositivo: "desktop",
+    desafio: "Hacer seguimiento de clientes y oportunidades de venta.",
+    solucion: "Tablero con pipeline, embudo de conversión, alertas de clientes inactivos, tickets y stock.",
+    imagen: "img/proyectos/nexo-roverano-tablero-oscuro.jpg",
+    alt: "Tablero comercial de NEXO Roverano con leads, tasa de conversión, tickets y alertas de clientes sin comprar"
+  },
+  {
+    cliente: "SOS Baterías — Centro de operaciones",
+    tipo: "Sistema web",
+    dispositivo: "desktop",
+    desafio: "Coordinar los móviles de auxilio y los turnos del día.",
+    solucion: "Panel en tiempo real con estado de cada móvil, agenda visual y alertas de atrasos.",
+    imagen: "img/proyectos/sos-baterias-operaciones.jpg",
+    alt: "Centro de operaciones de SOS Baterías con el estado de cada móvil y los servicios del día"
+  },
+  {
+    cliente: "Enclave Reserva — Tienda y gestión de pedidos",
+    tipo: "App a medida",
+    dispositivo: "mobile",
+    desafio: "Vender vinos online y administrar pedidos y cobros desde el celular.",
+    solucion: "App de gestión con catálogo, pedidos, ventas y apertura/pausa de la tienda.",
+    /* Varias capturas: se muestran lado a lado y el lightbox permite pasar de una a otra */
+    capturas: [
+      { src: "img/proyectos/enclave-productos-800.jpg", alt: "App de Enclave Reserva en el celular: catálogo de productos con precios" },
+      { src: "img/proyectos/enclave-pedidos-800.jpg", alt: "App de Enclave Reserva en el celular: pedidos por catálogo y particulares" },
+      { src: "img/proyectos/enclave-ventas-800.jpg", alt: "App de Enclave Reserva en el celular: resumen de ventas y cobros" }
+    ]
+  }
 ];
 
 /* ===== NÚMEROS DE IMPACTO =====
@@ -37,12 +70,13 @@ const STATS = [
 
 /* ===== CLIENTES ("Confían en nosotros") =====
    Logos de clientes reales (con su permiso). Vacío = la franja no se muestra.
-   Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional) */
+   Ej.: { nombre: "Cliente", logo: "img/clientes/cliente.svg", link: "https://www.ejemplo.com" } (link opcional).
+   Cada logo va en una tarjeta blanca de 160×72; si el logo es claro o tiene fondo negro, agregá fondo: "oscuro". */
 const CLIENTES = [
   { nombre: "Lebloc", logo: "img/clientes/lebloc.png" },
   { nombre: "Roverano", logo: "img/clientes/roverano.png" },
   { nombre: "SBVQ", logo: "img/clientes/sbvq.jpg" },
-  { nombre: "Enclave", logo: "img/clientes/enclave.jpeg" }
+  { nombre: "Enclave", logo: "img/clientes/enclave.jpeg", fondo: "oscuro" }
 ];
 
 /* ===== SERVICIOS ACTIVOS =====
@@ -51,6 +85,10 @@ const CLIENTES = [
    Para reactivar Growth o Brand alcanza con ponerlos en true: no hace falta tocar nada más
    (revisá además los textos de hero, SEO y footer, que hoy hablan solo de desarrollo). */
 const SERVICIOS_ACTIVOS = { Code: true, Growth: false, Brand: false };
+
+/* Cotizador: con false solo se elige el tipo de proyecto (sin extras ni plazo urgente).
+   Poné true para volver a mostrar los extras (SEO, blog, multilenguaje, integraciones) y el plazo. */
+const COTIZADOR_COMPLETO = false;
 
 /* ===== CONFIGURACIÓN =====
    STUDIO_EMAIL:    adónde llegan las consultas.
@@ -162,22 +200,96 @@ const GA_ID = "[G-XXXXXXX]";
   const SERV = { Code: "Aura Code", Growth: "Aura Growth", Brand: "Aura Brand" };
   const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
   const safeUrl = u => u && !/^\s*(javascript|data|vbscript):/i.test(u);
+  /* ---------- Lightbox de capturas: abre en grande, flechas, Escape y clic afuera cierran ---------- */
+  const lightbox = (function () {
+    let box, img, cap, count, prev, next, closeBtn, items = [], i = 0, opener = null;
+    function build() {
+      box = el("div", "lb"); box.hidden = true;
+      box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); box.setAttribute("aria-label", "Captura ampliada");
+      const fig = el("figure", "lb-fig");
+      img = el("img"); cap = el("figcaption", "lb-cap");
+      fig.appendChild(img); fig.appendChild(cap);
+      const mk = (cls, label, svg) => { const b = el("button", cls); b.type = "button"; b.setAttribute("aria-label", label); b.innerHTML = svg; return b; };
+      closeBtn = mk("lb-btn lb-close", "Cerrar", '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>');
+      prev = mk("lb-btn lb-prev", "Captura anterior", '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 5l-7 7 7 7"/></svg>');
+      next = mk("lb-btn lb-next", "Captura siguiente", '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg>');
+      count = el("span", "lb-count");
+      box.append(fig, closeBtn, prev, next, count);
+      document.body.appendChild(box);
+      box.addEventListener("click", e => { if (e.target === box || e.target.classList.contains("lb-fig")) close(); });
+      closeBtn.addEventListener("click", close);
+      prev.addEventListener("click", () => go(-1));
+      next.addEventListener("click", () => go(1));
+      document.addEventListener("keydown", e => {
+        if (box.hidden) return;
+        if (e.key === "Escape") { e.preventDefault(); close(); }
+        else if (e.key === "ArrowLeft" && items.length > 1) go(-1);
+        else if (e.key === "ArrowRight" && items.length > 1) go(1);
+        else if (e.key === "Tab") { /* el foco queda dentro del diálogo */
+          const f = [closeBtn, prev, next].filter(b => !b.hidden);
+          const first = f[0], last = f[f.length - 1];
+          if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+          else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+          else if (!box.contains(document.activeElement)) { e.preventDefault(); first.focus(); }
+        }
+      });
+    }
+    function show() {
+      const it = items[i];
+      img.src = it.src; img.alt = it.alt || "";
+      cap.textContent = it.alt || "";
+      const many = items.length > 1;
+      prev.hidden = next.hidden = count.hidden = !many;
+      count.textContent = (i + 1) + " / " + items.length;
+    }
+    function go(d) { i = (i + d + items.length) % items.length; show(); }
+    function open(list, idx, from) {
+      if (!box) build();
+      items = list; i = idx; opener = from || null;
+      show(); box.hidden = false;
+      document.documentElement.classList.add("lb-open");
+      closeBtn.focus();
+    }
+    function close() {
+      box.hidden = true; img.removeAttribute("src");
+      document.documentElement.classList.remove("lb-open");
+      if (opener && document.contains(opener)) opener.focus();
+    }
+    return { open };
+  })();
+
+  /* ---------- Proyectos (se oculta si PROYECTOS está vacío) ---------- */
   const projSection = $("proyectos");
   if (projSection && Array.isArray(PROYECTOS) && PROYECTOS.length) {
     const grid = $("proj-grid");
+    const lupa = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5"/></svg>';
     PROYECTOS.forEach(p => {
       const card = el("article", "case reveal");
-      if (p.imagen) {
-        const img = el("img");
-        img.src = p.imagen; img.alt = p.alt || ""; img.width = 800; img.height = 500;
-        img.loading = "lazy"; img.decoding = "async";
-        card.appendChild(img);
+      const shots = (p.capturas && p.capturas.length ? p.capturas : (p.imagen ? [{ src: p.imagen, alt: p.alt }] : [])).filter(s => s && s.src);
+      if (shots.length) {
+        const mobile = p.dispositivo === "mobile";
+        const media = el("div", "media " + (mobile ? "is-mobile" : "is-desktop"));
+        shots.forEach((s, n) => {
+          const btn = el("button", "shot"); btn.type = "button";
+          btn.setAttribute("aria-label", "Ver captura ampliada: " + (s.alt || p.cliente || ""));
+          const frame = el("div", mobile ? "phone" : "win");
+          if (!mobile) { const bar = el("div", "bar"); bar.setAttribute("aria-hidden", "true"); bar.append(el("i"), el("i"), el("i")); frame.appendChild(bar); }
+          const img = el("img"); img.src = s.src; img.alt = s.alt || "";
+          if (mobile) { img.width = 800; img.height = 1739; } else { img.width = 1600; img.height = 1000; }
+          img.loading = "lazy"; img.decoding = "async";
+          frame.appendChild(img); btn.appendChild(frame);
+          const z = el("span", "zoom"); z.setAttribute("aria-hidden", "true"); z.innerHTML = lupa + "<b>Ver captura</b>"; btn.appendChild(z);
+          btn.addEventListener("click", () => lightbox.open(shots, n, btn));
+          media.appendChild(btn);
+        });
+        if (shots.length > 1) { const m = el("span", "more", shots.length + " capturas"); m.setAttribute("aria-hidden", "true"); media.appendChild(m); }
+        card.appendChild(media);
       }
       const body = el("div", "body");
-      body.appendChild(el("span", "tag", SERV[p.servicio] || p.servicio || ""));
+      body.appendChild(el("span", "tag", p.tipo || SERV[p.servicio] || p.servicio || ""));
       body.appendChild(el("h3", "", p.cliente || ""));
       const dl = el("dl");
-      [["Desafío", p.desafio], ["Resultado", p.resultado]].forEach(r => {
+      [["Desafío", p.desafio], ["Solución", p.solucion || p.resultado]].forEach(r => {
         if (!r[1]) return;
         const d = el("div"); d.appendChild(el("dt", "", r[0])); d.appendChild(el("dd", "", r[1])); dl.appendChild(d);
       });
@@ -210,9 +322,10 @@ const GA_ID = "[G-XXXXXXX]";
     const ul = $("clients-list");
     const make = (c, clone) => {
       const li = el("li");
-      const img = el("img"); img.src = c.logo; img.alt = clone ? "" : (c.nombre || ""); img.width = 72; img.height = 72; img.decoding = "async";
+      const img = el("img"); img.src = c.logo; img.alt = clone ? "" : (c.nombre || ""); img.decoding = "async";
       if (safeUrl(c.link)) { const a = el("a"); a.href = c.link; a.target = "_blank"; a.rel = "noopener noreferrer"; if (clone) a.tabIndex = -1; a.appendChild(img); li.appendChild(a); }
       else li.appendChild(img);
+      if (c.fondo === "oscuro") li.classList.add("dark");
       if (clone) { li.setAttribute("aria-hidden", "true"); li.dataset.clone = "1"; }
       return li;
     };
@@ -221,7 +334,7 @@ const GA_ID = "[G-XXXXXXX]";
     if (ul.children.length) {
       $("clientes").hidden = false;
       /* Cinta infinita: se repite la lista hasta cubrir el ancho y se duplica el bloque para que el loop no deje huecos */
-      const unit = 72 + 56, vw = Math.max(window.innerWidth, ul.parentNode.clientWidth, 1200);
+      const unit = 160 + 56, vw = Math.max(window.innerWidth, ul.parentNode.clientWidth, 1200);
       const k = Math.max(1, Math.ceil(vw / (base.length * unit)));
       const total = base.length * k * 2;
       for (let i = base.length; i < total; i++) ul.appendChild(make(base[i % base.length], true));
@@ -264,6 +377,18 @@ const GA_ID = "[G-XXXXXXX]";
     if (n.hasAttribute("data-active-only")) n.hidden = false;
     n.querySelectorAll("[data-active-only]").forEach(x => { x.hidden = false; });
   });
+  if (COTIZADOR_COMPLETO) document.querySelectorAll("[data-cotizador-completo]").forEach(n => { n.hidden = false; });
+  /* Growth y Brand: el bloque de tarjetas aparece solo si alguno está activo; la nota "Próximamente" lista los que faltan */
+  (function () {
+    const ext = $("servicios-extra"), nota = $("soon-note");
+    if (ext && (activo("Growth") || activo("Brand"))) ext.hidden = false;
+    if (nota) {
+      const faltan = [];
+      if (!activo("Growth")) faltan.push("Aura Growth (publicidad en Meta)");
+      if (!activo("Brand")) faltan.push("Aura Brand (redes sociales)");
+      if (faltan.length) nota.textContent = "Próximamente: " + faltan.join(" y ") + "."; else nota.hidden = true;
+    }
+  })();
 
   /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------
      w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%.
@@ -272,7 +397,7 @@ const GA_ID = "[G-XXXXXXX]";
     site: [
       { id: "none", name: "No necesito sitio", note: "Solo marketing o redes", w: 0 },
       { id: "landing", name: "Landing page", note: "1 página de conversión", w: 2, chip: "c-landing" },
-      { id: "corp", name: "Sitio institucional", note: "Hasta 6 secciones", w: 4, chip: "c-sitio" },
+      { id: "corp", name: "Sitio institucional", note: "Hasta 5 secciones", w: 4, chip: "c-sitio" },
       { id: "ecom", name: "Tienda online", note: "E-commerce con pagos y envíos", w: 6, chip: "c-tienda" },
       { id: "app", name: "App a medida", note: "Usuarios, panel, lógica a medida", w: 10, chip: "c-app" }
     ],
@@ -307,7 +432,7 @@ const GA_ID = "[G-XXXXXXX]";
     /* "No necesito sitio" solo tiene sentido si hay otro servicio activo */
     const sites = Q.site.filter(o => o.id !== "none" || activo("Growth") || activo("Brand"));
     $("q-site").innerHTML = sites.map(o => opt("site", o, "radio", o.id === "corp")).join("");
-    $("q-extras").innerHTML = Q.extras.map(o => opt("extras", o, "checkbox", o.id === "seo")).join("");
+    $("q-extras").innerHTML = Q.extras.map(o => opt("extras", o, "checkbox", COTIZADOR_COMPLETO && o.id === "seo")).join("");
     $("q-growth").innerHTML = Q.growth.map(o => opt("growth", o, "radio", o.id === (activo("Growth") ? "g1" : "g0"), !activo("Growth"))).join("");
     $("q-brand").innerHTML = Q.brand.map(o => opt("brand", o, "radio", o.id === "b0", !activo("Brand"))).join("");
     $("q-time").innerHTML = Q.time.map(o => opt("time", o, "radio", o.id === "std")).join("");
@@ -318,16 +443,16 @@ const GA_ID = "[G-XXXXXXX]";
       /* Extras y plazo solo aplican si se eligió un sitio */
       document.querySelectorAll("#q-extras input").forEach(i => { i.disabled = !hasSite; if (!hasSite) i.checked = false; });
       document.querySelectorAll("#q-time input").forEach(i => { i.disabled = !hasSite; });
-      const exOn = hasSite ? Q.extras.filter(o => $("q-extras-" + o.id).checked) : [];
+      const exOn = COTIZADOR_COMPLETO && hasSite ? Q.extras.filter(o => $("q-extras-" + o.id).checked) : [];
       let w = site.w;
       exOn.forEach(o => { w += o.w; });
-      const weeks = hasSite && t.id === "fast" ? Math.max(1, Math.ceil(w * 0.7)) : w;
+      const weeks = COTIZADOR_COMPLETO && hasSite && t.id === "fast" ? Math.max(1, Math.ceil(w * 0.7)) : w;
       const lines = [];
       if (hasSite) lines.push(["Aura Code", site.name]);
       exOn.forEach(o => lines.push(["Extra", o.name]));
       if (activo("Growth") && gr.id !== "g0") lines.push(["Aura Growth", gr.name]);
       if (activo("Brand") && br.id !== "b0") lines.push(["Aura Brand", "Redes " + br.name]);
-      if (hasSite) lines.push(["Plazo", t.name]);
+      if (COTIZADOR_COMPLETO && hasSite) lines.push(["Plazo", t.name]);
       $("q-lines").innerHTML = lines.length ? lines.map(l => "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1]) + "</dd></div>").join("") : "<div><dd>Elegí al menos una opción.</dd></div>";
       const weeksTxt = weeks + (weeks === 1 ? " semana" : " semanas");
       $("q-weeks").textContent = weeks ? "Entrega estimada del sitio: " + weeksTxt + "." : "";
