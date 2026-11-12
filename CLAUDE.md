@@ -25,7 +25,8 @@ Textos en español rioplatense (vos). No inventar clientes, testimonios ni cifra
 ## Configuración (arriba de `js/app.js`)
 - `PROYECTOS`: casos de éxito (`cliente`, `servicio`, `desafio`, `resultado`, `imagen`, `alt`, `link`). Vacío = sección y links (`[data-proj-link]`) ocultos.
 - `STATS`: franja de números. Valores `[Completar]` no se muestran; si no hay ninguno real, se oculta la franja.
-- `CLIENTES`: logos de "Confían en nosotros". Vacío = franja oculta.
+- `CLIENTES`: logos de "Confían en nosotros" (cinta infinita al final de la página, antes del footer; archivos en `img/clientes/`). Vacío = franja oculta.
+- `SERVICIOS_ACTIVOS`: `{ Code: true, Growth: false, Brand: false }`. Hoy solo Aura Code está activo; Growth (publicidad) y Brand (redes) figuran como "Próximamente": tarjetas atenuadas con distintivo y sin link, grupos del cotizador deshabilitados (no entran al resumen ni al texto de "Solicitar cotización"), chips de Growth/Brand ocultos en el formulario y footer con "próximamente". Todo el código y el HTML de Growth y Brand sigue ahí: para reactivar un servicio ponelo en `true` (el HTML marca esos elementos con `data-servicio` / `data-soon` / `data-active-only`) y revisá los textos que hoy hablan solo de desarrollo (hero, título y meta description/Open Graph, JSON-LD con un solo servicio, footer, proceso).
 - `WHATSAPP_NUMBER`: mientras sea `[549XXXXXXXXXX]` el botón flotante queda oculto.
 - `GA_ID`: mientras sea `[G-XXXXXXX]` no se carga Analytics ni se muestra el banner de cookies. Con ID válido, GA4 solo carga si el visitante acepta (`localStorage.aura_consent`).
 - `STUDIO_EMAIL`, `WEB3FORMS_KEY`: destino del formulario (Web3Forms; si falla, opción "Abrir en mi correo").

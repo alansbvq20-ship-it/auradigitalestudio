@@ -41,8 +41,16 @@ const STATS = [
 const CLIENTES = [
   { nombre: "Lebloc", logo: "img/clientes/lebloc.png" },
   { nombre: "Roverano", logo: "img/clientes/roverano.png" },
-  { nombre: "SBVQ", logo: "img/clientes/sbvq.jpg" }
+  { nombre: "SBVQ", logo: "img/clientes/sbvq.jpg" },
+  { nombre: "Enclave", logo: "img/clientes/enclave.jpeg" }
 ];
+
+/* ===== SERVICIOS ACTIVOS =====
+   Qué servicios se ofrecen hoy. Los que están en false se muestran como "Próximamente"
+   (tarjeta atenuada, grupo del cotizador deshabilitado, sin opción en el formulario).
+   Para reactivar Growth o Brand alcanza con ponerlos en true: no hace falta tocar nada más
+   (revisá además los textos de hero, SEO y footer, que hoy hablan solo de desarrollo). */
+const SERVICIOS_ACTIVOS = { Code: true, Growth: false, Brand: false };
 
 /* ===== CONFIGURACIÓN =====
    STUDIO_EMAIL:    adónde llegan las consultas.
@@ -246,15 +254,27 @@ const GA_ID = "[G-XXXXXXX]";
   }
 
 
+  /* ---------- Servicios "Próximamente" (ver SERVICIOS_ACTIVOS arriba) ----------
+     El HTML ya viene en estado "próximamente"; acá se reactiva lo que esté en true. */
+  const activo = s => SERVICIOS_ACTIVOS[s] === true;
+  document.querySelectorAll("[data-servicio]").forEach(n => {
+    if (!activo(n.dataset.servicio)) return;
+    n.classList.remove("soon");
+    n.querySelectorAll("[data-soon]").forEach(x => x.remove());
+    if (n.hasAttribute("data-active-only")) n.hidden = false;
+    n.querySelectorAll("[data-active-only]").forEach(x => { x.hidden = false; });
+  });
+
   /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------
-     w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%. */
+     w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%.
+     Los grupos growth y brand quedan preparados: con SERVICIOS_ACTIVOS en true se habilitan. */
   const Q = {
     site: [
       { id: "none", name: "No necesito sitio", note: "Solo marketing o redes", w: 0 },
-      { id: "landing", name: "Landing page", note: "1 página de conversión", w: 2 },
-      { id: "corp", name: "Sitio corporativo", note: "Hasta 6 secciones", w: 4 },
-      { id: "ecom", name: "E-commerce", note: "Tienda con pagos y envíos", w: 6 },
-      { id: "app", name: "Aplicación web", note: "Usuarios, panel, lógica a medida", w: 10 }
+      { id: "landing", name: "Landing page", note: "1 página de conversión", w: 2, chip: "c-landing" },
+      { id: "corp", name: "Sitio institucional", note: "Hasta 6 secciones", w: 4, chip: "c-sitio" },
+      { id: "ecom", name: "Tienda online", note: "E-commerce con pagos y envíos", w: 6, chip: "c-tienda" },
+      { id: "app", name: "App a medida", note: "Usuarios, panel, lógica a medida", w: 10, chip: "c-app" }
     ],
     extras: [
       { id: "seo", name: "SEO inicial", note: "Estructura, metadatos, velocidad", w: 0 },
@@ -280,14 +300,16 @@ const GA_ID = "[G-XXXXXXX]";
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   let quoteText = "";
   if ($("q-form")) {
-    const opt = (group, o, type, checked) => {
+    const opt = (group, o, type, checked, off) => {
       const id = "q-" + group + "-" + o.id;
-      return '<div class="opt"><input type="' + type + '" name="q-' + group + '" id="' + id + '" value="' + o.id + '"' + (checked ? " checked" : "") + '><label for="' + id + '">' + esc(o.name) + (o.note ? "<small>" + esc(o.note) + "</small>" : "") + "</label></div>";
+      return '<div class="opt"><input type="' + type + '" name="q-' + group + '" id="' + id + '" value="' + o.id + '"' + (checked ? " checked" : "") + (off ? " disabled" : "") + '><label for="' + id + '">' + esc(o.name) + (o.note ? "<small>" + esc(o.note) + "</small>" : "") + "</label></div>";
     };
-    $("q-site").innerHTML = Q.site.map(o => opt("site", o, "radio", o.id === "corp")).join("");
+    /* "No necesito sitio" solo tiene sentido si hay otro servicio activo */
+    const sites = Q.site.filter(o => o.id !== "none" || activo("Growth") || activo("Brand"));
+    $("q-site").innerHTML = sites.map(o => opt("site", o, "radio", o.id === "corp")).join("");
     $("q-extras").innerHTML = Q.extras.map(o => opt("extras", o, "checkbox", o.id === "seo")).join("");
-    $("q-growth").innerHTML = Q.growth.map(o => opt("growth", o, "radio", o.id === "g1")).join("");
-    $("q-brand").innerHTML = Q.brand.map(o => opt("brand", o, "radio", o.id === "b0")).join("");
+    $("q-growth").innerHTML = Q.growth.map(o => opt("growth", o, "radio", o.id === (activo("Growth") ? "g1" : "g0"), !activo("Growth"))).join("");
+    $("q-brand").innerHTML = Q.brand.map(o => opt("brand", o, "radio", o.id === "b0", !activo("Brand"))).join("");
     $("q-time").innerHTML = Q.time.map(o => opt("time", o, "radio", o.id === "std")).join("");
     const pick = (g, list) => list.find(o => o.id === (document.querySelector('input[name="q-' + g + '"]:checked') || {}).value);
     const quote = () => {
@@ -303,23 +325,25 @@ const GA_ID = "[G-XXXXXXX]";
       const lines = [];
       if (hasSite) lines.push(["Aura Code", site.name]);
       exOn.forEach(o => lines.push(["Extra", o.name]));
-      if (gr.id !== "g0") lines.push(["Aura Growth", gr.name]);
-      if (br.id !== "b0") lines.push(["Aura Brand", "Redes " + br.name]);
+      if (activo("Growth") && gr.id !== "g0") lines.push(["Aura Growth", gr.name]);
+      if (activo("Brand") && br.id !== "b0") lines.push(["Aura Brand", "Redes " + br.name]);
       if (hasSite) lines.push(["Plazo", t.name]);
       $("q-lines").innerHTML = lines.length ? lines.map(l => "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1]) + "</dd></div>").join("") : "<div><dd>Elegí al menos una opción.</dd></div>";
       const weeksTxt = weeks + (weeks === 1 ? " semana" : " semanas");
       $("q-weeks").textContent = weeks ? "Entrega estimada del sitio: " + weeksTxt + "." : "";
-      const nothing = !hasSite && gr.id === "g0" && br.id === "b0";
+      const nothing = !lines.some(l => l[0] === "Aura Code" || l[0] === "Aura Growth" || l[0] === "Aura Brand");
       $("q-send").disabled = nothing;
       quoteText = nothing ? "" : "Solicitud de cotización:\n" + lines.map(l => "• " + l[0] + ": " + l[1]).join("\n") + (weeks ? "\nEntrega estimada: " + weeksTxt : "");
+      quote.site = site;
     };
     $("q-form").addEventListener("change", quote); quote();
     $("q-send").addEventListener("click", () => {
       track("solicitar_cotizacion", { opciones: quoteText.split("\n").length - 1 });
       $("c-msg").value = quoteText + "\n\nComentarios: ";
-      const map = { "Aura Code": "c-code", "Aura Growth": "c-growth", "Aura Brand": "c-brand" };
-      ["c-code", "c-growth", "c-brand"].forEach(id => $(id).checked = false);
-      Object.keys(map).forEach(k => { if (quoteText.includes(k)) $(map[k]).checked = true; });
+      document.querySelectorAll(".chips input").forEach(i => { i.checked = false; });
+      if (quote.site && quote.site.chip) $(quote.site.chip).checked = true;
+      if (activo("Growth") && quoteText.includes("Aura Growth")) $("c-growth").checked = true;
+      if (activo("Brand") && quoteText.includes("Aura Brand")) $("c-brand").checked = true;
       $("e-msg").textContent = ""; $("c-msg").removeAttribute("aria-invalid");
       $("contacto").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
       setTimeout(() => $("c-name").focus({ preventScroll: true }), 500);
@@ -387,7 +411,7 @@ const GA_ID = "[G-XXXXXXX]";
       note.hidden = true; $("c-fallback").hidden = true;
       if (!validate()) return;
       const name = $("c-name").value.trim(), mail = $("c-mail").value.trim(), msg = $("c-msg").value.trim();
-      const needs = ["c-code", "c-growth", "c-brand"].filter(id => $(id).checked).map(id => "Aura " + $(id).value);
+      const needs = [...document.querySelectorAll(".chips input:checked")].map(i => i.value);
       const subject = "Nueva consulta web: " + name + (needs.length ? " (" + needs.join(", ") + ")" : "");
       const body = "Nombre: " + name + "\nEmail: " + mail + "\nNecesita: " + (needs.join(", ") || "Sin especificar") + "\n\n" + msg;
       note.hidden = false;

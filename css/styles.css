@@ -309,3 +309,14 @@ body.has-wa .fbottom{padding-bottom:calc(1.5rem + 64px)}
 }
 .nav.simple .wrap{display:flex;justify-content:space-between}
 footer li:has(> [hidden]:only-child){display:none}
+
+/* Servicios: Aura Code activo y destacado; Growth y Brand "Próximamente" (ver SERVICIOS_ACTIVOS en js/app.js) */
+.svc.main{border-color:rgba(30,144,255,.55);box-shadow:0 0 0 1px rgba(30,144,255,.22),0 14px 44px rgba(30,144,255,.14)}
+.soon-badge{position:absolute;top:18px;right:18px;z-index:1;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1;color:#fff;background:var(--btn);border:1px solid var(--accent);border-radius:999px;padding:.4rem .8rem}
+.soon-badge.ok{background:rgba(30,144,255,.16);color:var(--accent-text);border-color:rgba(92,200,255,.45)}
+.soon-badge.inline{position:static;display:inline-block;margin-left:.6rem;padding:.3rem .65rem;font-size:.68rem;vertical-align:middle}
+.svc.soon > :not(.soon-badge){opacity:.5}
+.svc.soon:hover{transform:none;border-color:var(--line)}
+.qgroup.soon .opts{pointer-events:none}
+.soon-li{color:var(--muted);opacity:.65;font-size:.95rem}
+.opt input:disabled:checked + label{border-color:var(--line-2);background:transparent}
