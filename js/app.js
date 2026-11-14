@@ -376,16 +376,88 @@ const GA_ID = "[G-XXXXXXX]";
     n.querySelectorAll("[data-active-only]").forEach(x => { x.hidden = false; });
   });
   if (COTIZADOR_COMPLETO) document.querySelectorAll("[data-cotizador-completo]").forEach(n => { n.hidden = false; });
-  /* Growth y Brand: el bloque de tarjetas aparece solo si alguno está activo; la nota "Próximamente" lista los que faltan */
+  /* Growth y Brand: sus tarjetas vuelven a Servicios apenas están activos y salen de "Lo que viene" */
   (function () {
-    const ext = $("servicios-extra"), nota = $("soon-note");
+    const ext = $("servicios-extra");
     if (ext && (activo("Growth") || activo("Brand"))) ext.hidden = false;
-    if (nota) {
-      const faltan = [];
-      if (!activo("Growth")) faltan.push("Aura Growth (publicidad en Meta)");
-      if (!activo("Brand")) faltan.push("Aura Brand (redes sociales)");
-      if (faltan.length) nota.textContent = "Próximamente: " + faltan.join(" y ") + "."; else nota.hidden = true;
+
+    const band = $("lo-que-viene");
+    if (!band) return;
+    band.querySelectorAll("[data-soon-card]").forEach(c => { if (activo(c.dataset.servicio)) c.remove(); });
+    const faltan = ["Growth", "Brand"].filter(s => !activo(s));
+    if (!faltan.length) { band.hidden = true; return; }
+
+    /* Lista de espera: el selector solo ofrece los servicios que todavía no están activos */
+    if (faltan.length === 1) {
+      $("wl-pick").hidden = true;
+      $(faltan[0] === "Growth" ? "wl-g" : "wl-b").checked = true;
+      const solo = band.querySelector(".soon-cards"); if (solo) solo.classList.add("one");
     }
+    const open = $("wl-open"), form = $("wl-form"), note = $("wl-note"), btn = $("wl-submit");
+    const LOCK_MS = 30000, LOCK_KEY = "aura_last_wl";
+    let lockTimer = 0, memLast = 0;
+    const lastSent = () => +store.get(LOCK_KEY) || memLast;
+    const lockLeft = () => Math.max(0, LOCK_MS - (Date.now() - lastSent()));
+    function tickLock() {
+      clearTimeout(lockTimer);
+      const left = lockLeft();
+      if (left > 0) { btn.disabled = true; btn.textContent = "Reenviar en " + Math.ceil(left / 1000) + " s"; lockTimer = setTimeout(tickLock, 500); }
+      else { btn.disabled = false; btn.textContent = "Avisarme"; }
+    }
+    open.addEventListener("click", () => {
+      form.hidden = false; open.hidden = true; open.setAttribute("aria-expanded", "true");
+      note.hidden = true;
+      $("wl-mail").focus();
+    });
+    const setErr = (id, errId, msg) => {
+      $(errId).textContent = msg;
+      if (msg) $(id).setAttribute("aria-invalid", "true"); else $(id).removeAttribute("aria-invalid");
+    };
+    const mailMsg = v => !v ? "Escribí tu email." : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? "Revisá tu email: tiene que verse como nombre@dominio.com." : "";
+    $("wl-mail").addEventListener("input", () => { if ($("e-wl-mail").textContent) setErr("wl-mail", "e-wl-mail", mailMsg($("wl-mail").value.trim())); });
+    $("wl-priv").addEventListener("change", () => { if ($("wl-priv").checked) setErr("wl-priv", "e-wl-priv", ""); });
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (lockLeft() > 0) { tickLock(); return; }
+      note.hidden = true;
+      const mail = $("wl-mail").value.trim(), m = mailMsg(mail);
+      setErr("wl-mail", "e-wl-mail", m);
+      const okPriv = $("wl-priv").checked;
+      setErr("wl-priv", "e-wl-priv", okPriv ? "" : "Tenés que aceptar la Política de Privacidad para anotarte.");
+      if (m) { $("wl-mail").focus(); return; }
+      if (!okPriv) { $("wl-priv").focus(); return; }
+      const picked = (form.querySelector('input[name="wl-svc"]:checked') || {}).value || faltan.join(" y ");
+      const subject = "Lista de espera: " + picked;
+      const done = () => {
+        form.hidden = true;
+        note.style.color = "var(--ok)"; note.textContent = "¡Listo! Te avisamos apenas lancemos."; note.hidden = false;
+        track("lista_espera", { servicio: picked });
+        memLast = Date.now(); store.set(LOCK_KEY, String(memLast)); tickLock();
+      };
+      /* Honeypot tildado = bot: simulamos éxito sin enviar nada */
+      if ($("wl-botcheck").checked) { done(); return; }
+      btn.disabled = true; btn.textContent = "Enviando…";
+      let sent = false;
+      if (WEB3FORMS_KEY) {
+        try {
+          const r = await fetch("https://api.web3forms.com/submit", {
+            method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject, from_name: "Web Aura Digital", replyto: mail, email: mail, servicio: picked, message: "Quiere enterarse primero del lanzamiento de: " + picked, botcheck: $("wl-botcheck").checked })
+          });
+          const j = await r.json();
+          if (!j.success) throw new Error(j.message);
+          sent = true;
+        } catch (err) { /* se muestra el aviso de abajo */ }
+      }
+      if (sent) { done(); return; }
+      tickLock(); if (lockLeft() <= 0) { btn.disabled = false; btn.textContent = "Avisarme"; }
+      note.style.color = "var(--warn)";
+      note.innerHTML = "";
+      note.append("No pudimos enviarlo ahora. Probá de nuevo o escribinos a ");
+      const a = el("a", "", STUDIO_EMAIL); a.href = "mailto:" + STUDIO_EMAIL + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent("Quiero enterarme primero del lanzamiento de: " + picked); note.appendChild(a); note.append(".");
+      note.hidden = false;
+    });
+    tickLock();
   })();
 
   /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------

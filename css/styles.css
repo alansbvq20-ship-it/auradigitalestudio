@@ -376,3 +376,34 @@ html.lb-open{overflow:hidden}
 .lb-prev{left:12px}.lb-next{right:12px}
 .lb-count{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:var(--muted);font-size:.85rem}
 @media (max-width:640px){.lb-prev,.lb-next{top:auto;bottom:10px;margin-top:0}.lb-prev{left:16px}.lb-next{right:16px}.lb-count{bottom:24px}}
+
+/* Lo que viene: Growth y Brand "Próximamente" + lista de espera */
+.soon-sec{padding-block:clamp(40px,6vw,80px)}
+.soon-box{position:relative;isolation:isolate;overflow:hidden;border:1px solid transparent;border-radius:20px;padding:clamp(26px,4.5vw,60px);
+  background:linear-gradient(135deg,rgba(30,144,255,.17),rgba(106,92,255,.17)) padding-box,linear-gradient(var(--bg),var(--bg)) padding-box,linear-gradient(135deg,var(--accent),var(--violet)) border-box}
+.soon-box::before{content:"";position:absolute;z-index:-1;top:-40%;left:-20%;width:70%;aspect-ratio:1;pointer-events:none;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(92,200,255,.30),rgba(106,92,255,.16) 55%,transparent 75%);filter:blur(30px);animation:soonGlow 16s ease-in-out infinite alternate}
+@keyframes soonGlow{to{transform:translate(95%,45%)}}
+.head.center{justify-items:center;text-align:center;margin-inline:auto}
+.head.center .lead{margin-inline:auto}
+.soon-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.25rem}
+.soon-cards.one{grid-template-columns:minmax(0,520px);justify-content:center}
+@media (max-width:760px){.soon-cards{grid-template-columns:1fr}}
+.soon-card{position:relative;display:grid;gap:.7rem;align-content:start;padding:clamp(24px,3vw,34px);border:1px solid var(--line-2);border-radius:var(--r);background:rgba(7,13,38,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.soon-card h3{font-size:1.5rem}
+.soon-card .tagline{margin:0;font-size:1.15rem;font-weight:700;color:var(--accent-text)}
+.soon-card p{margin:0;color:var(--text)}
+.gico{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--violet));box-shadow:0 8px 24px rgba(30,144,255,.35)}
+.gico svg{width:28px;height:28px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.soon-pill{position:absolute;top:18px;right:18px;display:inline-flex;align-items:center;gap:.45rem;padding:.4rem .8rem;border-radius:999px;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;line-height:1;color:#fff;background:linear-gradient(135deg,var(--btn),#5a4be0);box-shadow:0 0 18px rgba(106,92,255,.5)}
+.soon-pill i{width:7px;height:7px;border-radius:50%;background:#fff;animation:soonPulse 1.8s ease-in-out infinite}
+@keyframes soonPulse{50%{opacity:.35;transform:scale(.7)}}
+.waitlist{display:grid;justify-items:center;gap:1rem;margin-top:clamp(24px,3vw,36px);text-align:left}
+#wl-form{display:grid;gap:1rem;width:min(560px,100%);padding:clamp(18px,2.4vw,26px);border:1px solid var(--line-2);border-radius:var(--r);background:rgba(7,13,38,.7)}
+.wl-pick{border:0;margin:0;padding:0;min-width:0;display:grid;gap:.5rem}
+.wl-pick legend{font-size:.88rem;font-weight:500;color:var(--muted);margin-bottom:.5rem;padding:0}
+.wl-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.8rem;align-items:start}
+.wl-row .btn{margin-top:1.62rem}
+@media (max-width:520px){.wl-row{grid-template-columns:1fr}.wl-row .btn{margin-top:0}}
+#wl-note{text-align:center;margin:0}
+#wl-note a{color:var(--accent-text)}

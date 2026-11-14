@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Michroma&display=swap">
-<link rel="stylesheet" href="css/styles.css?v=15">
+<link rel="stylesheet" href="css/styles.css?v=17">
 <link rel="stylesheet" href="css/logo.css?v=4">
 <script>document.documentElement.classList.add("js")</script>
 
@@ -60,7 +60,7 @@
   }
 }
 </script>
-<script src="js/app.js?v=10" defer></script>
+<script src="js/app.js?v=12" defer></script>
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -187,10 +187,9 @@
           <p class="who"><b>Ideal para</b> quienes necesitan gestionar o automatizar procesos.</p>
         </article>
       </div>
-      <!-- Growth y Brand: preparados para reactivarse con SERVICIOS_ACTIVOS (js/app.js). Hoy quedan ocultos. -->
+      <!-- Growth y Brand: hoy viven en "Lo que viene"; al activarlos en SERVICIOS_ACTIVOS (js/app.js) aparecen acá. -->
       <div class="services" id="servicios-extra" hidden>
-        <article class="svc soon reveal" hidden data-active-only data-servicio="Growth">
-          <span class="soon-badge" data-soon>Próximamente</span>
+        <article class="svc reveal" hidden data-active-only data-servicio="Growth">
           <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span>
           <h3>Aura Growth</h3>
           <p>Marketing y pauta orientados 100% al retorno de inversión, con cada peso medido.</p>
@@ -202,8 +201,7 @@
           </ul>
           <a class="link" hidden data-active-only href="#cotizador" aria-label="Saber más sobre Aura Growth">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
-        <article class="svc soon reveal" hidden data-active-only data-servicio="Brand">
-          <span class="soon-badge" data-soon>Próximamente</span>
+        <article class="svc reveal" hidden data-active-only data-servicio="Brand">
           <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg></span>
           <h3>Aura Brand</h3>
           <p>Community management y social media para construir autoridad de marca.</p>
@@ -216,7 +214,62 @@
           <a class="link" hidden data-active-only href="#cotizador" aria-label="Saber más sobre Aura Brand">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
       </div>
-      <p class="soon-note" id="soon-note">Próximamente: Aura Growth (publicidad en Meta) y Aura Brand (redes sociales).</p>
+    </div>
+  </section>
+
+  <!-- Lo que viene: Growth y Brand "Próximamente" (se manejan con SERVICIOS_ACTIVOS en js/app.js) -->
+  <section class="soon-sec" id="lo-que-viene" aria-labelledby="h-soon">
+    <div class="wrap">
+      <div class="soon-box reveal">
+        <div class="head center">
+          <span class="eyebrow">Próximamente</span>
+          <h2 id="h-soon">Lo que viene</h2>
+          <p class="lead">Estamos preparando dos servicios más para acompañar tu web. Sumate a la lista y enterate primero.</p>
+        </div>
+        <div class="soon-cards">
+          <article class="soon-card" data-soon-card data-servicio="Growth">
+            <span class="soon-pill"><i aria-hidden="true"></i>Próximamente</span>
+            <span class="gico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span>
+            <h3>Aura Growth</h3>
+            <p class="tagline">Publicidad que vende</p>
+            <p>Campañas en Instagram, Facebook y Google pensadas para generar ventas, con reportes claros.</p>
+          </article>
+          <article class="soon-card" data-soon-card data-servicio="Brand">
+            <span class="soon-pill"><i aria-hidden="true"></i>Próximamente</span>
+            <span class="gico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg></span>
+            <h3>Aura Brand</h3>
+            <p class="tagline">Redes que construyen marca</p>
+            <p>Contenido, diseño y gestión de redes para que tu marca se vea profesional.</p>
+          </article>
+        </div>
+        <div class="waitlist" id="waitlist">
+          <button class="btn" type="button" id="wl-open" aria-expanded="false" aria-controls="wl-form">Quiero enterarme primero</button>
+          <form id="wl-form" novalidate hidden>
+            <fieldset class="wl-pick" id="wl-pick">
+              <legend>¿Cuál te interesa?</legend>
+              <div class="chips">
+                <input type="radio" name="wl-svc" id="wl-both" value="Growth y Brand" checked><label for="wl-both">Las dos</label>
+                <input type="radio" name="wl-svc" id="wl-g" value="Growth"><label for="wl-g">Aura Growth</label>
+                <input type="radio" name="wl-svc" id="wl-b" value="Brand"><label for="wl-b">Aura Brand</label>
+              </div>
+            </fieldset>
+            <div class="wl-row">
+              <div>
+                <label for="wl-mail"><span>Tu email <span class="req" aria-hidden="true">*</span></span><input id="wl-mail" type="email" autocomplete="email" required aria-describedby="e-wl-mail"></label>
+                <p class="field-err" id="e-wl-mail" role="alert"></p>
+              </div>
+              <button class="btn" type="submit" id="wl-submit">Avisarme</button>
+            </div>
+            <!-- Honeypot de Web3Forms: oculto para personas, los bots lo tildan -->
+            <input type="checkbox" name="botcheck" id="wl-botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <div>
+              <label class="consent" for="wl-priv"><input type="checkbox" id="wl-priv" required aria-describedby="e-wl-priv"><span>Acepto la <a href="privacidad.html" target="_blank" rel="noopener">Política de Privacidad</a>. Usamos tu email solo para avisarte del lanzamiento.</span></label>
+              <p class="field-err" id="e-wl-priv" role="alert"></p>
+            </div>
+          </form>
+          <p class="note" id="wl-note" role="status" hidden></p>
+        </div>
+      </div>
     </div>
   </section>
 
