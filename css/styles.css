@@ -407,3 +407,13 @@ html.lb-open{overflow:hidden}
 @media (max-width:520px){.wl-row{grid-template-columns:1fr}.wl-row .btn{margin-top:0}}
 #wl-note{text-align:center;margin:0}
 #wl-note a{color:var(--accent-text)}
+
+/* Proyectos: capturas de celular que ya traen su marco (sin marco extra) y tarjeta final a todo el ancho */
+.phone.bare{border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}
+.case .phone.bare img{aspect-ratio:auto;filter:drop-shadow(0 14px 26px rgba(0,0,0,.45))}
+.is-mobile .phone.bare ~ .zoom{border-radius:24px}
+@media (min-width:861px){
+  .case.wide{grid-column:1/-1;flex-direction:row}
+  .case.wide .media{flex:0 0 52%;height:auto;min-height:440px}
+  .case.wide .body{flex:1;align-content:center;padding:clamp(26px,3vw,44px)}
+}

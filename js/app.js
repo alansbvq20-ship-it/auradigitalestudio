@@ -10,7 +10,9 @@
      tipo:     etiqueta del tipo de proyecto (ej.: "Sistema web", "App a medida"); si falta se usa servicio: "Code" | "Growth" | "Brand"
      dispositivo: "desktop" (captura de escritorio, marco de navegador) o "mobile" (celular)
      imagen:   ruta a una captura (.webp o .jpg) dentro de img/proyectos/ + alt: su descripción
-     capturas: alternativa a imagen/alt, varias: [{ src: "...", alt: "..." }, ...] (lightbox con flechas)
+     capturas: alternativa a imagen/alt, varias: [{ src: "...", alt: "...", w, h }, ...] (lightbox con flechas)
+     marcoPropio: true si las capturas ya traen marco de celular (no se les agrega otro)
+     visibles: cuántas capturas se ven en la tarjeta (el lightbox muestra todas)
      desafio / solucion: una frase cada uno
      link:     URL del proyecto o caso (opcional)
 */
@@ -53,6 +55,22 @@ const PROYECTOS = [
       { src: "img/proyectos/enclave-productos-800.jpg", alt: "App de Enclave Reserva en el celular: catálogo de productos con precios" },
       { src: "img/proyectos/enclave-pedidos-800.jpg", alt: "App de Enclave Reserva en el celular: pedidos por catálogo y particulares" },
       { src: "img/proyectos/enclave-ventas-800.jpg", alt: "App de Enclave Reserva en el celular: resumen de ventas y cobros" }
+    ]
+  },
+  {
+    cliente: "SICO Technologies — Sistema Integral de Coordinación Operativa",
+    tipo: "App a medida",
+    dispositivo: "mobile",
+    marcoPropio: true, /* las capturas ya traen marco de celular y fondo transparente: no se les agrega otro */
+    visibles: 3,       /* en la tarjeta se ven las 3 primeras; el lightbox suma el resto */
+    desafio: "Coordinar en segundos la respuesta de los bomberos ante una emergencia: quién va, a dónde y cuánto tarda.",
+    solucion: "App de despacho con interfaz para el bombero y panel para el operador: geolocalización de cada bombero en tiempo real, seguimiento de las unidades en camino, respuesta inmediata a la convocatoria, tiempo estimado de llegada, estado de la intervención y avisos segmentados por destacamento.",
+    capturas: [
+      { src: "img/proyectos/sico-bombero.webp", w: 360, h: 654, alt: "SICO: interfaz del bombero con su perfil, intervención activa y estadísticas" },
+      { src: "img/proyectos/sico-operador.webp", w: 360, h: 647, alt: "SICO: panel del operador con la intervención en curso, personal en camino, distancia y tiempo estimado de llegada" },
+      { src: "img/proyectos/sico-respuesta.webp", w: 340, h: 579, alt: "SICO: respuesta inmediata del bombero ante un aviso de emergencia" },
+      { src: "img/proyectos/sico-avisos.webp", w: 340, h: 579, alt: "SICO: avisos segmentados a los bomberos" },
+      { src: "img/proyectos/sico-intervencion.webp", w: 340, h: 579, alt: "SICO: estado de la intervención en curso" }
     ]
   }
 ];
@@ -262,19 +280,19 @@ const GA_ID = "[G-XXXXXXX]";
   if (projSection && Array.isArray(PROYECTOS) && PROYECTOS.length) {
     const grid = $("proj-grid");
     const lupa = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5"/></svg>';
-    PROYECTOS.forEach(p => {
-      const card = el("article", "case reveal");
+    PROYECTOS.forEach((p, pi) => {
+      const card = el("article", "case reveal" + (PROYECTOS.length % 2 && pi === PROYECTOS.length - 1 ? " wide" : ""));
       const shots = (p.capturas && p.capturas.length ? p.capturas : (p.imagen ? [{ src: p.imagen, alt: p.alt }] : [])).filter(s => s && s.src);
       if (shots.length) {
         const mobile = p.dispositivo === "mobile";
         const media = el("div", "media " + (mobile ? "is-mobile" : "is-desktop"));
-        shots.forEach((s, n) => {
+        shots.slice(0, p.visibles || shots.length).forEach((s, n) => {
           const btn = el("button", "shot"); btn.type = "button";
           btn.setAttribute("aria-label", "Ver captura ampliada: " + (s.alt || p.cliente || ""));
-          const frame = el("div", mobile ? "phone" : "win");
+          const frame = el("div", mobile ? "phone" + (p.marcoPropio ? " bare" : "") : "win");
           if (!mobile) { const bar = el("div", "bar"); bar.setAttribute("aria-hidden", "true"); bar.append(el("i"), el("i"), el("i")); frame.appendChild(bar); }
           const img = el("img"); img.src = s.src; img.alt = s.alt || "";
-          if (mobile) { img.width = 800; img.height = 1739; } else { img.width = 1600; img.height = 1000; }
+          if (s.w && s.h) { img.width = s.w; img.height = s.h; } else if (mobile) { img.width = 800; img.height = 1739; } else { img.width = 1600; img.height = 1000; }
           img.loading = "lazy"; img.decoding = "async";
           frame.appendChild(img); btn.appendChild(frame);
           const z = el("span", "zoom"); z.setAttribute("aria-hidden", "true"); z.innerHTML = lupa + "<b>Ver captura</b>"; btn.appendChild(z);
