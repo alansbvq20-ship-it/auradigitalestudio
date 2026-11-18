@@ -115,35 +115,35 @@ const SERVICIOS_ACTIVOS = { Code: true, Growth: false, Brand: false };
    mantenimiento: agregado opcional mensual (sin cuotas).
    Si la cotización no carga, se muestran solo los precios en USD. */
 const PRECIOS = {
-  tipoDolar: "bolsa",
+  tipoDolar: "oficial",
   cuotas: 3,
   cartel: "Precios de lanzamiento para los primeros 10 clientes",
   incluyeTodas: "Todas las webs incluyen SEO inicial, diseño adaptado a celular y formulario de contacto.",
   paquetes: [
     {
-      nombre: "Landing Page", usd: 90, desde: false, destacado: false, entrega: "2 semanas",
+      nombre: "Landing Page", usd: 50, desde: true, destacado: false, entrega: "2 semanas",
       express: { etiqueta: "Entrega express en 1 semana", usd: 30, entrega: "1 semana" },
       descripcion: "Web de una página para presentar tu negocio.",
       incluye: ["Web de una sola página"]
     },
     {
-      nombre: "Web Institucional", usd: 190, desde: false, destacado: true, entrega: "4 semanas",
+      nombre: "Web Institucional", usd: 80, desde: true, destacado: true, entrega: "4 semanas",
       descripcion: "Tu empresa en la web, con varias secciones.",
       incluye: ["Varias secciones", "Formulario de contacto", "Dominio configurado"]
     },
     {
-      nombre: "Tienda Online", usd: 350, desde: true, destacado: false, entrega: "desde 6 semanas",
+      nombre: "Tienda Online", usd: 100, desde: true, destacado: false, entrega: "desde 6 semanas",
       descripcion: "Vendé tus productos online, las 24 horas.",
       incluye: ["Catálogo de productos", "Carrito y pagos con Mercado Pago", "Envíos"]
     },
     {
-      nombre: "Apps a Medida", usd: 500, desde: true, destacado: false, entrega: "desde 10 semanas",
+      nombre: "Apps a Medida", usd: 150, desde: true, destacado: false, entrega: "desde 10 semanas",
       descripcion: "Apps de turnos, gestión y más, hechas para tu negocio.",
       incluye: ["Apps de turnos, gestión y más"],
       ejemplo: { texto: "Ejemplo: SICO, coordinación operativa para bomberos", enlace: "#proyectos" }
     }
   ],
-  mantenimiento: { nombre: "Abono de mantenimiento", usd: 12, periodo: "mes", descripcion: "Hosting, actualizaciones y soporte." }
+  mantenimiento: { nombre: "Abono de mantenimiento", usd: 20, periodo: "mes", descripcion: "Hosting, actualizaciones y soporte." }
 };
 
 /* ===== CONFIGURACIÓN =====
@@ -521,8 +521,10 @@ const GA_ID = "[G-XXXXXXX]";
       txt.append(el("span", "plan-opt", "Agregado opcional"), el("h3", "", m.nombre));
       if (m.descripcion) txt.appendChild(el("p", "", m.descripcion));
       const price = el("div", "plan-price");
-      price.appendChild(el("b", "", "USD " + usd(m.usd) + (m.periodo ? " / " + m.periodo : "")));
-      price.appendChild(arsSpan(m.usd, m.periodo ? " / " + m.periodo : ""));
+      const mTxt = "USD " + usd(m.usd) + (m.periodo ? "/" + m.periodo : "");
+      price.appendChild(el("b", "", mTxt));
+      { const mt = $("c-mant-txt"); if (mt) mt.textContent = mTxt; }
+      price.appendChild(arsSpan(m.usd));
       const tog = el("button", "btn ghost sm", "Sumar al pedido");
       tog.type = "button"; tog.id = "px-mant-btn"; tog.setAttribute("aria-pressed", "false");
       tog.addEventListener("click", () => { const c = $("c-mant"); if (c) { c.checked = !c.checked; syncMant(); } });
@@ -535,7 +537,7 @@ const GA_ID = "[G-XXXXXXX]";
 
     /* Cotización del dólar: si falla o tarda más de 5 s, quedan solo los precios en USD */
     const TIPOS = { oficial: "oficial", blue: "blue", bolsa: "bolsa (MEP)" };
-    const tipo = TIPOS[PRECIOS.tipoDolar] ? PRECIOS.tipoDolar : "bolsa";
+    const tipo = TIPOS[PRECIOS.tipoDolar] ? PRECIOS.tipoDolar : "oficial";
     if (typeof fetch !== "function") return;
     const ctl = typeof AbortController === "function" ? new AbortController() : null;
     const timer = setTimeout(() => { if (ctl) ctl.abort(); }, 5000);
@@ -545,7 +547,7 @@ const GA_ID = "[G-XXXXXXX]";
         const venta = +j.venta;
         if (!(venta > 0)) throw new Error("sin venta");
         fxVenta = venta;
-        if (PRECIOS.mantenimiento && $("c-mant-ars")) $("c-mant-ars").textContent = ars(PRECIOS.mantenimiento.usd * venta);
+        if (PRECIOS.mantenimiento && $("c-mant-txt")) $("c-mant-txt").textContent = "USD " + usd(PRECIOS.mantenimiento.usd) + (PRECIOS.mantenimiento.periodo ? "/" + PRECIOS.mantenimiento.periodo : "") + " ≈ " + ars(PRECIOS.mantenimiento.usd * venta);
         paintArs();
         let d = new Date(j.fechaActualizacion);
         if (isNaN(d)) d = new Date();
@@ -777,7 +779,7 @@ const GA_ID = "[G-XXXXXXX]";
       const needs = [paqueteTexto() || "A definir"];
       const subject = "Nueva consulta web: " + name + (needs.length ? " (" + needs.join(", ") + ")" : "");
       const wapp = $("c-wa").value.trim(), mant = $("c-mant").checked;
-      const mantTxt = mant ? "Sí" + (PRECIOS && PRECIOS.mantenimiento ? " (USD " + PRECIOS.mantenimiento.usd + "/mes, aprox. " + ($("c-mant-ars").textContent || "") + "/mes)" : "") : "No";
+      const mantTxt = mant ? "Sí (" + ($("c-mant-txt").textContent || "").trim() + ")" : "No";
       const body = "Nombre: " + name + "\nEmail: " + mail + (wapp ? "\nWhatsApp: " + wapp : "") + "\nPaquete elegido: " + needs[0] + "\nMantenimiento mensual: " + mantTxt + "\n\n" + msg;
       note.hidden = false;
       /* Honeypot tildado = bot: simulamos éxito sin enviar nada */
