@@ -98,14 +98,53 @@ const CLIENTES = [
 
 /* ===== SERVICIOS ACTIVOS =====
    Qué servicios se ofrecen hoy. Los que están en false se muestran como "Próximamente"
-   (tarjeta atenuada, grupo del cotizador deshabilitado, sin opción en el formulario).
+   (franja "Lo que viene" con lista de espera, sin opción en el formulario).
    Para reactivar Growth o Brand alcanza con ponerlos en true: no hace falta tocar nada más
    (revisá además los textos de hero, SEO y footer, que hoy hablan solo de desarrollo). */
 const SERVICIOS_ACTIVOS = { Code: true, Growth: false, Brand: false };
 
-/* Cotizador: con false solo se elige el tipo de proyecto (sin extras ni plazo urgente).
-   Poné true para volver a mostrar los extras (SEO, blog, multilenguaje, integraciones) y el plazo. */
-const COTIZADOR_COMPLETO = false;
+/* ===== PRECIOS (sección "Precios") =====
+   Todos los valores se editan acá. Precios en dólares (USD).
+   tipoDolar:  "oficial" | "blue" | "bolsa" (MEP). Se consulta https://dolarapi.com/v1/dolares/{tipoDolar} y se usa "venta".
+   cuotas:     cantidad de cuotas que se muestra bajo cada precio (precio / cuotas, redondeado hacia arriba a USD enteros).
+   desde:      true = el precio se muestra como "Desde USD X".
+   destacado:  true = tarjeta marcada como "Más elegido".
+   entrega:    plazo estimado de entrega que se muestra en la tarjeta ("Entrega estimada: …"). Ajustalo a gusto.
+   express:    extra opcional del paquete (casilla en la tarjeta): { etiqueta, usd (se suma al precio), entrega (reemplaza el plazo) }.
+   incluyeTodas: texto que se muestra debajo de las tarjetas.
+   mantenimiento: agregado opcional mensual (sin cuotas).
+   Si la cotización no carga, se muestran solo los precios en USD. */
+const PRECIOS = {
+  tipoDolar: "bolsa",
+  cuotas: 3,
+  cartel: "Precios de lanzamiento para los primeros 10 clientes",
+  incluyeTodas: "Todas las webs incluyen SEO inicial, diseño adaptado a celular y formulario de contacto.",
+  paquetes: [
+    {
+      nombre: "Landing Page", usd: 90, desde: false, destacado: false, entrega: "2 semanas",
+      express: { etiqueta: "Entrega express en 1 semana", usd: 30, entrega: "1 semana" },
+      descripcion: "Web de una página para presentar tu negocio.",
+      incluye: ["Web de una sola página"]
+    },
+    {
+      nombre: "Web Institucional", usd: 190, desde: false, destacado: true, entrega: "4 semanas",
+      descripcion: "Tu empresa en la web, con varias secciones.",
+      incluye: ["Varias secciones", "Formulario de contacto", "Dominio configurado"]
+    },
+    {
+      nombre: "Tienda Online", usd: 350, desde: true, destacado: false, entrega: "desde 6 semanas",
+      descripcion: "Vendé tus productos online, las 24 horas.",
+      incluye: ["Catálogo de productos", "Carrito y pagos con Mercado Pago", "Envíos"]
+    },
+    {
+      nombre: "Apps a Medida", usd: 500, desde: true, destacado: false, entrega: "desde 10 semanas",
+      descripcion: "Apps de turnos, gestión y más, hechas para tu negocio.",
+      incluye: ["Apps de turnos, gestión y más"],
+      ejemplo: { texto: "Ejemplo: SICO, coordinación operativa para bomberos", enlace: "#proyectos" }
+    }
+  ],
+  mantenimiento: { nombre: "Abono de mantenimiento", usd: 12, periodo: "mes", descripcion: "Hosting, actualizaciones y soporte." }
+};
 
 /* ===== CONFIGURACIÓN =====
    STUDIO_EMAIL:    adónde llegan las consultas.
@@ -325,6 +364,200 @@ const GA_ID = "[G-XXXXXXX]";
     document.querySelectorAll("[data-proj-link]").forEach(n => { n.hidden = false; });
   }
 
+  /* ---------- Paquete elegido: lo fija el botón de cada tarjeta de Precios y se muestra en el formulario ---------- */
+  let paquete = "", expressOn = false, autoMsg = "";
+  let resetExpress = () => { expressOn = false; };
+  const paqueteDef = n => ((typeof PRECIOS !== "undefined" && PRECIOS.paquetes) || []).find(p => p.nombre === n);
+  function paqueteTexto() {
+    const d = paqueteDef(paquete);
+    return paquete + (d && d.express && expressOn ? " + Entrega express" : "");
+  }
+  function setPaquete(nombre) {
+    paquete = nombre || "";
+    const n = $("c-pack-name"); if (n) n.textContent = paqueteTexto() || "A definir";
+    document.querySelectorAll(".plan[data-pkg]").forEach(c => {
+      const on = !!paquete && c.dataset.pkg === paquete;
+      c.classList.toggle("selected", on);
+      if (on) c.setAttribute("aria-current", "true"); else c.removeAttribute("aria-current");
+    });
+  }
+
+  /* Modo "idea": se llega desde "¿Tenés un proyecto en mente?" -> Mensaje más alto, otro placeholder y el cursor ahí */
+  const IDEA_PLACEHOLDER = "Contanos tu idea: qué hace tu negocio, qué necesitás y si tenés alguna referencia o fecha en mente.";
+  const msgInicial = { ph: ($("c-msg") || {}).placeholder, rows: ($("c-msg") || {}).rows };
+  function modoIdea(on) {
+    const m = $("c-msg"); if (!m) return;
+    m.placeholder = on ? IDEA_PLACEHOLDER : msgInicial.ph;
+    m.rows = on ? 12 : msgInicial.rows;
+  }
+  document.querySelectorAll("[data-idea]").forEach(a => a.addEventListener("click", () => {
+    resetExpress(); setPaquete("");
+    const m = $("c-msg"); if (!m) return;
+    if (m.value === autoMsg) m.value = "";
+    modoIdea(true);
+    setTimeout(() => m.focus({ preventScroll: true }), reduceMotion() ? 50 : 650);
+  }));
+
+  /* ---------- Precios: se arma desde PRECIOS y, si hay cotización, suma el equivalente en pesos ---------- */
+  (function () {
+    if (PRECIOS && Array.isArray(PRECIOS.paquetes) && PRECIOS.paquetes.length) document.querySelectorAll("[data-precios-link]").forEach(n => { n.hidden = false; });
+    const sec = $("precios");
+    if (!sec || !PRECIOS || !Array.isArray(PRECIOS.paquetes) || !PRECIOS.paquetes.length) return;
+    const usd = n => Number.isInteger(n) ? String(n) : n.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const ars = n => "$" + (Math.round(n / 1000) * 1000).toLocaleString("es-AR");
+    const arsSpan = (valor, extra) => { const s = el("span", "ars"); s.dataset.usd = String(valor); if (extra) s.dataset.extra = extra; s.hidden = true; return s; };
+    const nCuotas = PRECIOS.cuotas > 1 ? PRECIOS.cuotas : 0;
+    const cuotaUsd = t => Math.ceil(t / nCuotas);          /* cuotas en USD: números enteros */
+    const precioDe = p => p.usd + (p.express && expressOn ? p.express.usd : 0);
+    const refreshers = [];
+
+    /* Pesos: se pintan cuando hay cotización y se repintan si cambia un precio */
+    let fxVenta = 0;
+    const paintArs = () => {
+      if (!fxVenta) return;
+      sec.querySelectorAll(".ars").forEach(s => { s.textContent = "≈ " + ars(+s.dataset.usd * fxVenta) + (s.dataset.extra || ""); s.hidden = false; });
+    };
+    /* Mensaje precargado: se actualiza solo mientras nadie lo haya editado */
+    const prefill = p => {
+      const msg = $("c-msg"); if (!msg) return;
+      const t = "Hola, quiero consultar por " + paqueteTexto() + " (" + (p.desde ? "desde " : "") + "USD " + usd(precioDe(p)) + ").\n";
+      if (!msg.value.trim() || msg.value === autoMsg) { msg.value = t; autoMsg = t; }
+    };
+    resetExpress = () => { expressOn = false; document.querySelectorAll(".px-express-in").forEach(i => { i.checked = false; }); refreshers.forEach(r => r()); };
+
+    /* La casilla de mantenimiento del formulario y el botón de Precios van sincronizados */
+    function syncMant() {
+      const c = $("c-mant"), t = $("px-mant-btn"); if (!c || !t) return;
+      t.setAttribute("aria-pressed", c.checked ? "true" : "false");
+      t.textContent = c.checked ? "✓ Agregado al pedido" : "Sumar al pedido";
+      t.classList.toggle("ghost", !c.checked);
+    }
+    if ($("c-mant")) { $("c-mant").addEventListener("change", syncMant); if ($("c-form")) $("c-form").addEventListener("reset", () => setTimeout(syncMant, 0)); }
+
+    const inc = $("px-incluye"); if (inc && PRECIOS.incluyeTodas) { inc.textContent = PRECIOS.incluyeTodas; inc.hidden = false; }
+    if (PRECIOS.cartel) $("px-launch").append(el("i"), PRECIOS.cartel); else $("px-launch").hidden = true;
+
+    const plans = $("px-plans");
+    plans.dataset.count = String(PRECIOS.paquetes.length);
+    PRECIOS.paquetes.forEach(p => {
+      const card = el("article", "plan reveal" + (p.destacado ? " featured" : ""));
+      card.dataset.pkg = p.nombre;
+      { const sel = el("span", "plan-sel", "✓ Seleccionado"); sel.setAttribute("aria-hidden", "true"); card.appendChild(sel); }
+      if (p.destacado) card.appendChild(el("span", "plan-badge", "Más elegido"));
+      card.appendChild(el("h3", "", p.nombre));
+      if (p.descripcion) card.appendChild(el("p", "plan-desc", p.descripcion));
+      const price = el("div", "plan-price");
+      if (p.desde) price.appendChild(el("small", "", "Desde"));
+      else if (PRECIOS.paquetes.some(q => q.desde)) { const ph = el("small", "ph", "Desde"); ph.setAttribute("aria-hidden", "true"); price.appendChild(ph); }
+      const priceB = el("b", "", "USD " + usd(p.usd));
+      const priceArs = arsSpan(p.usd);
+      price.append(priceB, priceArs);
+      card.appendChild(price);
+      let cuotaTxt = null, cuotaArs = null;
+      if (nCuotas) {
+        const c = el("p", "plan-cuotas");
+        cuotaTxt = document.createTextNode(nCuotas + " cuotas " + (p.desde ? "desde " : "de ") + "USD " + usd(cuotaUsd(p.usd)) + " ");
+        cuotaArs = arsSpan(cuotaUsd(p.usd));
+        c.append(cuotaTxt, cuotaArs);
+        card.appendChild(c);
+      }
+      const ul = el("ul");
+      (p.incluye || []).forEach(t => ul.appendChild(el("li", "", t)));
+      if (p.ejemplo) { const li = el("li", "ej"); const a = el("a", "", p.ejemplo.texto); a.href = p.ejemplo.enlace || "#proyectos"; li.appendChild(a); ul.appendChild(li); }
+      card.appendChild(ul);
+
+      /* Extra opcional (entrega express): suma al precio y cambia el plazo */
+      let entregaB = null, inp = null;
+      if (p.express) {
+        const lab = el("label", "consent"); lab.htmlFor = "px-express-" + p.nombre.replace(/\W+/g, "");
+        inp = el("input", "px-express-in"); inp.type = "checkbox"; inp.id = lab.htmlFor;
+        lab.append(inp, el("span", "", p.express.etiqueta + " (+USD " + usd(p.express.usd) + ")"));
+        card.appendChild(lab);
+      }
+      if (p.entrega) { const e = el("p", "plan-entrega", "Entrega estimada: "); entregaB = el("b", "", p.entrega); e.appendChild(entregaB); card.appendChild(e); }
+      const refresh = () => {
+        const t = precioDe(p);
+        priceB.textContent = "USD " + usd(t); priceArs.dataset.usd = String(t);
+        if (cuotaTxt) { const cu = cuotaUsd(t); cuotaTxt.nodeValue = nCuotas + " cuotas " + (p.desde ? "desde " : "de ") + "USD " + usd(cu) + " "; cuotaArs.dataset.usd = String(cu); }
+        if (entregaB) entregaB.textContent = p.express && expressOn ? p.express.entrega : p.entrega;
+        paintArs();
+      };
+      refreshers.push(refresh);
+      if (inp) inp.addEventListener("change", () => {
+        expressOn = inp.checked;
+        if (expressOn) setPaquete(p.nombre); else setPaquete(paquete);
+        refreshers.forEach(r => r());
+        if (paquete === p.nombre) prefill(p);
+      });
+
+      const btn = el("a", "btn" + (p.destacado ? "" : " ghost"), "Quiero empezar");
+      btn.href = "#contacto";
+      btn.setAttribute("aria-label", "Quiero empezar: " + p.nombre);
+      btn.addEventListener("click", e => {
+        modoIdea(false);
+        if (expressOn && !p.express) resetExpress();
+        setPaquete(p.nombre);
+        prefill(p);
+        if (e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;   /* abrir en otra pestaña: comportamiento normal */
+        e.preventDefault();
+        const bajar = () => {
+          const t = $("contacto");
+          if (location.hash === "#contacto") { if (t) t.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" }); }
+          else location.hash = "#contacto";
+        };
+        if (reduceMotion()) { bajar(); return; }               /* sin animaciones: solo queda marcada */
+        card.classList.remove("flash"); void card.offsetWidth; card.classList.add("flash");
+        setTimeout(() => card.classList.remove("flash"), 900);
+        setTimeout(bajar, 650);
+      });
+      card.appendChild(btn);
+      plans.appendChild(card);
+    });
+
+    const m = PRECIOS.mantenimiento, box = $("px-maint");
+    if (m && m.usd) {
+      const card = el("div", "maint reveal");
+      const txt = el("div", "maint-txt");
+      txt.append(el("span", "plan-opt", "Agregado opcional"), el("h3", "", m.nombre));
+      if (m.descripcion) txt.appendChild(el("p", "", m.descripcion));
+      const price = el("div", "plan-price");
+      price.appendChild(el("b", "", "USD " + usd(m.usd) + (m.periodo ? " / " + m.periodo : "")));
+      price.appendChild(arsSpan(m.usd, m.periodo ? " / " + m.periodo : ""));
+      const tog = el("button", "btn ghost sm", "Sumar al pedido");
+      tog.type = "button"; tog.id = "px-mant-btn"; tog.setAttribute("aria-pressed", "false");
+      tog.addEventListener("click", () => { const c = $("c-mant"); if (c) { c.checked = !c.checked; syncMant(); } });
+      price.appendChild(tog);
+      card.append(txt, price);
+      box.appendChild(card);
+    } else box.hidden = true;
+
+    sec.hidden = false;
+
+    /* Cotización del dólar: si falla o tarda más de 5 s, quedan solo los precios en USD */
+    const TIPOS = { oficial: "oficial", blue: "blue", bolsa: "bolsa (MEP)" };
+    const tipo = TIPOS[PRECIOS.tipoDolar] ? PRECIOS.tipoDolar : "bolsa";
+    if (typeof fetch !== "function") return;
+    const ctl = typeof AbortController === "function" ? new AbortController() : null;
+    const timer = setTimeout(() => { if (ctl) ctl.abort(); }, 5000);
+    fetch("https://dolarapi.com/v1/dolares/" + tipo, ctl ? { signal: ctl.signal, headers: { Accept: "application/json" } } : undefined)
+      .then(r => { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+      .then(j => {
+        const venta = +j.venta;
+        if (!(venta > 0)) throw new Error("sin venta");
+        fxVenta = venta;
+        if (PRECIOS.mantenimiento && $("c-mant-ars")) $("c-mant-ars").textContent = ars(PRECIOS.mantenimiento.usd * venta);
+        paintArs();
+        let d = new Date(j.fechaActualizacion);
+        if (isNaN(d)) d = new Date();
+        let fecha;
+        try { fecha = d.toLocaleDateString("es-AR", { timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit", year: "numeric" }); } catch (e) { fecha = d.toLocaleDateString("es-AR"); }
+        $("px-fx").textContent = "Precio en pesos al dólar " + TIPOS[tipo] + " del día (cotización del " + fecha + ").";
+        $("px-fx").hidden = false;
+      })
+      .catch(() => { /* sin cotización: solo USD */ })
+      .finally(() => clearTimeout(timer));
+  })();
+
   /* ---------- Números de impacto (se oculta si no hay valores reales) ---------- */
   const isDone = v => v && !/\[completar\]/i.test(v);
   const statsOk = Array.isArray(STATS) ? STATS.filter(s => isDone(s.valor)) : [];
@@ -393,7 +626,6 @@ const GA_ID = "[G-XXXXXXX]";
     if (n.hasAttribute("data-active-only")) n.hidden = false;
     n.querySelectorAll("[data-active-only]").forEach(x => { x.hidden = false; });
   });
-  if (COTIZADOR_COMPLETO) document.querySelectorAll("[data-cotizador-completo]").forEach(n => { n.hidden = false; });
   /* Growth y Brand: sus tarjetas vuelven a Servicios apenas están activos y salen de "Lo que viene" */
   (function () {
     const ext = $("servicios-extra");
@@ -478,91 +710,6 @@ const GA_ID = "[G-XXXXXXX]";
     tickLock();
   })();
 
-  /* ---------- Armá tu proyecto (solicitud de cotización, sin precios) ----------
-     w = semanas de trabajo estimadas; el plazo urgente reduce las semanas un 30%.
-     Los grupos growth y brand quedan preparados: con SERVICIOS_ACTIVOS en true se habilitan. */
-  const Q = {
-    site: [
-      { id: "none", name: "No necesito sitio", note: "Solo marketing o redes", w: 0 },
-      { id: "landing", name: "Landing page", note: "1 página de conversión", w: 2, chip: "c-landing" },
-      { id: "corp", name: "Sitio institucional", note: "Hasta 5 secciones", w: 4, chip: "c-sitio" },
-      { id: "ecom", name: "Tienda online", note: "E-commerce con pagos y envíos", w: 6, chip: "c-tienda" },
-      { id: "app", name: "App a medida", note: "Usuarios, panel, lógica a medida", w: 10, chip: "c-app" }
-    ],
-    extras: [
-      { id: "seo", name: "SEO inicial", note: "Estructura, metadatos, velocidad", w: 0 },
-      { id: "blog", name: "Blog autogestionable", note: "Panel para publicar", w: 1 },
-      { id: "lang", name: "Multilenguaje", note: "Español + inglés", w: 1 },
-      { id: "integ", name: "Integraciones", note: "CRM, WhatsApp, pasarelas", w: 1 }
-    ],
-    growth: [
-      { id: "g0", name: "Sin pauta", note: "" },
-      { id: "g1", name: "Un canal", note: "Meta Ads o Google Ads" },
-      { id: "g2", name: "Meta + Google", note: "Embudo completo y reportes" }
-    ],
-    brand: [
-      { id: "b0", name: "Sin gestión de redes", note: "" },
-      { id: "b1", name: "Esencial", note: "8 piezas al mes · 1 red" },
-      { id: "b2", name: "Pro", note: "16 piezas + reels · 2 redes" }
-    ],
-    time: [
-      { id: "std", name: "Estándar", note: "Plazo recomendado" },
-      { id: "fast", name: "Urgente", note: "Prioridad en agenda" }
-    ]
-  };
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  let quoteText = "";
-  if ($("q-form")) {
-    const opt = (group, o, type, checked, off) => {
-      const id = "q-" + group + "-" + o.id;
-      return '<div class="opt"><input type="' + type + '" name="q-' + group + '" id="' + id + '" value="' + o.id + '"' + (checked ? " checked" : "") + (off ? " disabled" : "") + '><label for="' + id + '">' + esc(o.name) + (o.note ? "<small>" + esc(o.note) + "</small>" : "") + "</label></div>";
-    };
-    /* "No necesito sitio" solo tiene sentido si hay otro servicio activo */
-    const sites = Q.site.filter(o => o.id !== "none" || activo("Growth") || activo("Brand"));
-    $("q-site").innerHTML = sites.map(o => opt("site", o, "radio", o.id === "corp")).join("");
-    $("q-extras").innerHTML = Q.extras.map(o => opt("extras", o, "checkbox", COTIZADOR_COMPLETO && o.id === "seo")).join("");
-    $("q-growth").innerHTML = Q.growth.map(o => opt("growth", o, "radio", o.id === (activo("Growth") ? "g1" : "g0"), !activo("Growth"))).join("");
-    $("q-brand").innerHTML = Q.brand.map(o => opt("brand", o, "radio", o.id === "b0", !activo("Brand"))).join("");
-    $("q-time").innerHTML = Q.time.map(o => opt("time", o, "radio", o.id === "std")).join("");
-    const pick = (g, list) => list.find(o => o.id === (document.querySelector('input[name="q-' + g + '"]:checked') || {}).value);
-    const quote = () => {
-      const site = pick("site", Q.site), gr = pick("growth", Q.growth), br = pick("brand", Q.brand), t = pick("time", Q.time);
-      const hasSite = site.id !== "none";
-      /* Extras y plazo solo aplican si se eligió un sitio */
-      document.querySelectorAll("#q-extras input").forEach(i => { i.disabled = !hasSite; if (!hasSite) i.checked = false; });
-      document.querySelectorAll("#q-time input").forEach(i => { i.disabled = !hasSite; });
-      const exOn = COTIZADOR_COMPLETO && hasSite ? Q.extras.filter(o => $("q-extras-" + o.id).checked) : [];
-      let w = site.w;
-      exOn.forEach(o => { w += o.w; });
-      const weeks = COTIZADOR_COMPLETO && hasSite && t.id === "fast" ? Math.max(1, Math.ceil(w * 0.7)) : w;
-      const lines = [];
-      if (hasSite) lines.push(["Aura Code", site.name]);
-      exOn.forEach(o => lines.push(["Extra", o.name]));
-      if (activo("Growth") && gr.id !== "g0") lines.push(["Aura Growth", gr.name]);
-      if (activo("Brand") && br.id !== "b0") lines.push(["Aura Brand", "Redes " + br.name]);
-      if (COTIZADOR_COMPLETO && hasSite) lines.push(["Plazo", t.name]);
-      $("q-lines").innerHTML = lines.length ? lines.map(l => "<div><dt>" + esc(l[0]) + "</dt><dd>" + esc(l[1]) + "</dd></div>").join("") : "<div><dd>Elegí al menos una opción.</dd></div>";
-      const weeksTxt = weeks + (weeks === 1 ? " semana" : " semanas");
-      $("q-weeks").textContent = weeks ? "Entrega estimada del sitio: " + weeksTxt + "." : "";
-      const nothing = !lines.some(l => l[0] === "Aura Code" || l[0] === "Aura Growth" || l[0] === "Aura Brand");
-      $("q-send").disabled = nothing;
-      quoteText = nothing ? "" : "Solicitud de cotización:\n" + lines.map(l => "• " + l[0] + ": " + l[1]).join("\n") + (weeks ? "\nEntrega estimada: " + weeksTxt : "");
-      quote.site = site;
-    };
-    $("q-form").addEventListener("change", quote); quote();
-    $("q-send").addEventListener("click", () => {
-      track("solicitar_cotizacion", { opciones: quoteText.split("\n").length - 1 });
-      $("c-msg").value = quoteText + "\n\nComentarios: ";
-      document.querySelectorAll(".chips input").forEach(i => { i.checked = false; });
-      if (quote.site && quote.site.chip) $(quote.site.chip).checked = true;
-      if (activo("Growth") && quoteText.includes("Aura Growth")) $("c-growth").checked = true;
-      if (activo("Brand") && quoteText.includes("Aura Brand")) $("c-brand").checked = true;
-      $("e-msg").textContent = ""; $("c-msg").removeAttribute("aria-invalid");
-      $("contacto").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
-      setTimeout(() => $("c-name").focus({ preventScroll: true }), 500);
-    });
-  }
-
   /* ---------- Formulario de contacto ---------- */
   if ($("c-form")) {
     const LOCK_MS = 30000, LOCK_KEY = "aura_last_send";
@@ -609,9 +756,12 @@ const GA_ID = "[G-XXXXXXX]";
     }
     rules.forEach(r => $(r.id).addEventListener("input", () => { if ($(r.err).textContent) setErr(r.id, r.err, r.check($(r.id).value.trim())); }));
     $("c-priv").addEventListener("change", () => { if ($("c-priv").checked) setErr("c-priv", "e-priv", ""); });
+    const waMsg = v => { if (!v) return ""; const d = v.replace(/\D/g, "").length; return d < 8 || d > 15 || /[^\d\s()+.-]/.test(v) ? "Revisá tu WhatsApp: solo números, con código de área (ej.: 11 2345 6789)." : ""; };
+    $("c-wa").addEventListener("input", () => { if ($("e-wa").textContent) setErr("c-wa", "e-wa", waMsg($("c-wa").value.trim())); });
     function validate() {
       let first = null;
       rules.forEach(r => { const m = r.check($(r.id).value.trim()); setErr(r.id, r.err, m); if (m && !first) first = $(r.id); });
+      { const m = waMsg($("c-wa").value.trim()); setErr("c-wa", "e-wa", m); if (m && !first) first = $("c-wa"); }
       if (!$("c-priv").checked) { setErr("c-priv", "e-priv", "Tenés que aceptar la Política de Privacidad para enviar tu consulta."); if (!first) first = $("c-priv"); }
       else setErr("c-priv", "e-priv", "");
       if (first) first.focus();
@@ -624,9 +774,11 @@ const GA_ID = "[G-XXXXXXX]";
       note.hidden = true; $("c-fallback").hidden = true;
       if (!validate()) return;
       const name = $("c-name").value.trim(), mail = $("c-mail").value.trim(), msg = $("c-msg").value.trim();
-      const needs = [...document.querySelectorAll(".chips input:checked")].map(i => i.value);
+      const needs = [paqueteTexto() || "A definir"];
       const subject = "Nueva consulta web: " + name + (needs.length ? " (" + needs.join(", ") + ")" : "");
-      const body = "Nombre: " + name + "\nEmail: " + mail + "\nNecesita: " + (needs.join(", ") || "Sin especificar") + "\n\n" + msg;
+      const wapp = $("c-wa").value.trim(), mant = $("c-mant").checked;
+      const mantTxt = mant ? "Sí" + (PRECIOS && PRECIOS.mantenimiento ? " (USD " + PRECIOS.mantenimiento.usd + "/mes, aprox. " + ($("c-mant-ars").textContent || "") + "/mes)" : "") : "No";
+      const body = "Nombre: " + name + "\nEmail: " + mail + (wapp ? "\nWhatsApp: " + wapp : "") + "\nPaquete elegido: " + needs[0] + "\nMantenimiento mensual: " + mantTxt + "\n\n" + msg;
       note.hidden = false;
       /* Honeypot tildado = bot: simulamos éxito sin enviar nada */
       if ($("c-botcheck").checked) { note.style.color = "var(--ok)"; note.textContent = "Listo. Recibimos tu consulta."; startLock(); return; }
@@ -636,16 +788,16 @@ const GA_ID = "[G-XXXXXXX]";
         try {
           const r = await fetch("https://api.web3forms.com/submit", {
             method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
-            body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject, from_name: "Web Aura Digital", replyto: mail, name, email: mail, servicios: needs.join(", "), message: msg, botcheck: $("c-botcheck").checked })
+            body: JSON.stringify({ access_key: WEB3FORMS_KEY, subject, from_name: "Web Aura Digital", replyto: mail, name, email: mail, servicios: needs.join(", "), whatsapp: wapp || "No informado", mantenimiento_mensual: mantTxt, message: body, botcheck: $("c-botcheck").checked })
           });
           const j = await r.json();
           if (!j.success) throw new Error(j.message);
           sent = true;
           note.style.color = "var(--ok)";
           note.textContent = "Listo, " + name + ". Recibimos tu consulta y te respondemos a " + mail + " en menos de 24 horas hábiles.";
-          track("generate_lead", { form_id: "contacto", servicios: needs.join(", ") });
+          track("generate_lead", { form_id: "contacto", servicios: needs.join(", "), mantenimiento: mant ? "si" : "no" });
           track("form_submit", { form_id: "contacto" });
-          form.reset();
+          form.reset(); resetExpress(); setPaquete(""); modoIdea(false);
         } catch (err) {
           note.style.color = "var(--warn)"; note.textContent = "No pudimos enviar el formulario desde acá.";
         }

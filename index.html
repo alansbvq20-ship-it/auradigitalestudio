@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Aura Digital Estudio | Diseño web y desarrollo de apps a medida en Argentina</title>
-<meta name="description" content="Estudio de diseño web y desarrollo de aplicaciones a medida en Argentina. Sitios, tiendas online y apps para hacer crecer tu marca. Pedí tu cotización online.">
+<meta name="description" content="Estudio de diseño web y desarrollo de aplicaciones a medida en Argentina. Sitios, tiendas online y apps para hacer crecer tu marca. Mirá los precios y pedí tu cotización.">
 <link rel="canonical" href="https://auradigitalestudio.com/">
 <meta name="theme-color" content="#1e90ff">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -35,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Michroma&display=swap">
-<link rel="stylesheet" href="css/styles.css?v=18">
+<link rel="stylesheet" href="css/styles.css?v=33">
 <link rel="stylesheet" href="css/logo.css?v=4">
 <script>document.documentElement.classList.add("js")</script>
 
@@ -60,7 +60,7 @@
   }
 }
 </script>
-<script src="js/app.js?v=14" defer></script>
+<script src="js/app.js?v=27" defer></script>
 </head>
 <body>
 <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -72,11 +72,10 @@
       <li><a href="#servicios">Servicios</a></li>
       <li data-proj-link hidden><a href="#proyectos">Proyectos</a></li>
       <li><a href="#proceso">Proceso</a></li>
-      <li><a href="#cotizador">Armá tu proyecto</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <div class="nav-r">
-      <a class="btn sm" href="#contacto">Hablemos</a>
+      <a class="btn sm" href="#precios">Ver precios</a>
       <button class="burger" id="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú">
         <svg class="b" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         <svg class="x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
@@ -91,7 +90,7 @@
       <h1>Construimos el <em>ecosistema digital</em> de tu marca</h1>
       <p class="sub">Desarrollamos webs y aplicaciones a medida para hacer crecer tu marca.</p>
       <div class="ctas">
-        <a class="btn" href="#cotizador">Cotizar proyecto</a>
+        <a class="btn" href="#precios">Ver precios</a>
         <a class="btn ghost" href="#servicios">Ver servicios</a>
       </div>
     </div>
@@ -199,7 +198,7 @@
             <li>Embudos de venta medibles</li>
             <li>Reportes de ROAS y CPA</li>
           </ul>
-          <a class="link" hidden data-active-only href="#cotizador" aria-label="Saber más sobre Aura Growth">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="link" hidden data-active-only href="#precios" aria-label="Saber más sobre Aura Growth">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
         <article class="svc reveal" hidden data-active-only data-servicio="Brand">
           <span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 16l.8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8z"/></svg></span>
@@ -211,7 +210,7 @@
             <li>Diseño de contenido</li>
             <li>Construcción de autoridad</li>
           </ul>
-          <a class="link" hidden data-active-only href="#cotizador" aria-label="Saber más sobre Aura Brand">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="link" hidden data-active-only href="#precios" aria-label="Saber más sobre Aura Brand">Saber más <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </article>
       </div>
     </div>
@@ -299,45 +298,20 @@
     </div>
   </section>
 
-  <section class="band" id="cotizador" aria-labelledby="h-cotizador">
+  <!-- Precios: se arma desde PRECIOS (js/app.js); la cotización en pesos viene de dolarapi.com -->
+  <section class="band" id="precios" aria-labelledby="h-precios" hidden>
     <div class="wrap">
       <div class="head reveal">
-        <span class="eyebrow">Cotización</span>
-        <h2 id="h-cotizador">Armá tu proyecto</h2>
-        <p class="lead">Elegí lo que necesitás y pedinos una cotización: te respondemos con una propuesta a medida.</p>
+        <span class="eyebrow">Precios</span>
+        <h2 id="h-precios">Precios claros para tu proyecto</h2>
+        <p class="lead">Paquetes de Aura Code con precio en dólares y la opción de pagarlos en cuotas.</p>
       </div>
-      <div class="quote">
-        <div class="qbox" id="q-form">
-          <div class="qgroup" role="group" aria-labelledby="qg-site">
-            <h3 id="qg-site">Tipo de proyecto</h3>
-            <div class="opts" id="q-site"></div>
-          </div>
-          <div class="qgroup" role="group" aria-labelledby="qg-extras" hidden data-cotizador-completo>
-            <h3 id="qg-extras">Extras de desarrollo</h3>
-            <div class="opts" id="q-extras"></div>
-          </div>
-          <div class="qgroup soon" role="group" aria-labelledby="qg-growth" data-servicio="Growth">
-            <h3 id="qg-growth">Aura Growth · Gestión de pauta mensual <span class="soon-badge inline" data-soon>Próximamente</span></h3>
-            <div class="opts" id="q-growth"></div>
-          </div>
-          <div class="qgroup soon" role="group" aria-labelledby="qg-brand" data-servicio="Brand">
-            <h3 id="qg-brand">Aura Brand · Redes sociales mensual <span class="soon-badge inline" data-soon>Próximamente</span></h3>
-            <div class="opts" id="q-brand"></div>
-          </div>
-          <div class="qgroup" role="group" aria-labelledby="qg-time" hidden data-cotizador-completo>
-            <h3 id="qg-time">Plazo</h3>
-            <div class="opts" id="q-time"></div>
-          </div>
-          <p class="fine">Todas las webs incluyen SEO inicial, diseño adaptado a celular y formulario de contacto.</p>
-        </div>
-        <aside class="summary" aria-live="polite" aria-label="Tu selección">
-          <span class="eyebrow">Tu selección</span>
-          <dl id="q-lines"></dl>
-          <p class="fine" id="q-weeks"></p>
-          <button class="btn" id="q-send" type="button">Solicitar cotización</button>
-          <p class="fine">Cada proyecto es único. Te enviamos una propuesta personalizada en 24 hs.</p>
-        </aside>
-      </div>
+      <p class="launch reveal" id="px-launch"></p>
+      <div class="plans" id="px-plans"></div>
+      <p class="px-incluye" id="px-incluye" hidden></p>
+      <div id="px-maint"></div>
+      <p class="fine px-note">Valores en dólares estadounidenses (USD).</p>
+      <p class="fine px-note" id="px-fx" hidden></p>
     </div>
   </section>
 
@@ -346,7 +320,7 @@
       <div class="cta-box reveal">
         <h2 id="h-cta">¿Tenés un proyecto en mente?</h2>
         <p>Contanos qué querés lograr y armamos juntos el camino para hacerlo realidad.</p>
-        <a class="btn" href="#contacto">Hablemos</a>
+        <a class="btn" href="#contacto" data-idea>Contanos tu idea</a>
       </div>
     </div>
   </section>
@@ -381,19 +355,12 @@
               <p class="field-err" id="e-mail" role="alert"></p>
             </div>
           </div>
-          <fieldset style="border:0;margin:0;padding:0;display:grid;gap:.5rem;min-width:0">
-            <legend style="font-size:.88rem;font-weight:500;color:var(--muted);margin-bottom:.5rem;padding:0">¿Qué necesitás?</legend>
-            <div class="chips">
-              <input type="checkbox" id="c-landing" value="Landing page"><label for="c-landing">Landing page</label>
-              <input type="checkbox" id="c-sitio" value="Sitio institucional"><label for="c-sitio">Sitio institucional</label>
-              <input type="checkbox" id="c-tienda" value="Tienda online"><label for="c-tienda">Tienda online</label>
-              <input type="checkbox" id="c-app" value="App a medida"><label for="c-app">App a medida</label>
-              <input type="checkbox" id="c-otro" value="Otro"><label for="c-otro">Otro</label>
-              <!-- Listos para reactivar: poné Growth/Brand en true en SERVICIOS_ACTIVOS (js/app.js): se muestran solos -->
-              <input type="checkbox" id="c-growth" value="Aura Growth" hidden data-servicio="Growth" data-active-only><label for="c-growth" hidden data-servicio="Growth" data-active-only>Aura Growth</label>
-              <input type="checkbox" id="c-brand" value="Aura Brand" hidden data-servicio="Brand" data-active-only><label for="c-brand" hidden data-servicio="Brand" data-active-only>Aura Brand</label>
-            </div>
-          </fieldset>
+          <div>
+            <label for="c-wa"><span>WhatsApp (opcional)</span><input id="c-wa" type="tel" autocomplete="tel" inputmode="tel" placeholder="Ej.: 11 2345 6789" aria-describedby="e-wa"></label>
+            <p class="field-err" id="e-wa" role="alert"></p>
+          </div>
+          <p class="pack">Paquete elegido: <b id="c-pack-name">A definir</b> <a href="#precios" id="c-pack-change">cambiar</a></p>
+          <label class="consent" for="c-mant"><input type="checkbox" id="c-mant"><span>Quiero sumar el mantenimiento mensual (<span id="c-mant-ars">$20.000</span>/mes)</span></label>
           <div>
             <label for="c-msg"><span>Mensaje <span class="req" aria-hidden="true">*</span></span><textarea id="c-msg" rows="6" required placeholder="Ej.: necesito una tienda online para mi negocio" aria-describedby="e-msg"></textarea></label>
             <p class="field-err" id="e-msg" role="alert"></p>
@@ -449,7 +416,7 @@
         <ul>
           <li data-proj-link hidden><a href="#proyectos">Proyectos</a></li>
           <li><a href="#proceso">Proceso</a></li>
-          <li><a href="#cotizador">Armá tu proyecto</a></li>
+          <li data-precios-link hidden><a href="#precios">Precios</a></li>
           <li><a href="#contacto">Contacto</a></li>
         </ul>
       </div>
